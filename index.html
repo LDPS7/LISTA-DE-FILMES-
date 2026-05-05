@@ -1,0 +1,1316 @@
+<!-- COLE APENAS O CONTEÚDO ABAIXO NO EDITOR HTML DO BLOGGER -->
+<style>
+/* RESET BLOGGER INTERFERENCE */
+.post-body, .post-body * { box-sizing: border-box; }
+.post-body a { text-decoration: none !important; color: inherit !important; }
+.post-body h2, .post-body h3 { margin: 0; }
+
+/* ROOT VARS */
+#movie-app {
+  --bg: #07070d;
+  --bg2: #0f0f1a;
+  --bg3: #151525;
+  --surface: #1a1a2e;
+  --border: rgba(255,255,255,0.06);
+  --accent: #ff3c6e;
+  --accent2: #ffb83c;
+  --accent3: #3c9eff;
+  --text: #f0f0f8;
+  --muted: #6b6b8a;
+}
+
+/* CONTAINER PRINCIPAL */
+#movie-app {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 100vh;
+  background: radial-gradient(circle at 10% 10%, #1a0a15 0%, #07070d 70%);
+  color: var(--text);
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  position: relative;
+  overflow-x: hidden;
+  margin: -15px -20px;
+  padding: 0;
+}
+
+/* FORÇAR RESET NO POST-OUTER DO BLOGGER */
+.post-outer { background: transparent !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+.post-body { line-height: normal !important; font-size: 100% !important; }
+
+/* TOPBAR */
+#movie-topbar {
+  background: rgba(7,7,13,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.8rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.movie-logo {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: Georgia, serif;
+}
+
+.movie-logo-dot {
+  width: 8px; height: 8px;
+  background: var(--accent2);
+  border-radius: 50%;
+  animation: mdot 2s infinite;
+}
+@keyframes mdot {
+  0%,100%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.5);opacity:.6}
+}
+
+.movie-online {
+  font-size: 0.75rem;
+  color: var(--accent3);
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.movie-online-dot {
+  width: 6px; height: 6px;
+  background: var(--accent3);
+  border-radius: 50%;
+  animation: mdot 1.5s infinite;
+}
+
+.movie-stats {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.movie-stat { text-align: center; font-family: monospace; }
+.movie-stat-n { font-size: 1rem; font-weight: 700; color: var(--accent); line-height: 1; }
+.movie-stat-l { font-size: 0.55rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.1em; }
+
+/* SEARCH */
+#movie-search-wrap {
+  padding: 0.8rem 1.5rem;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+#movie-search {
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 1rem 0.7rem 2.4rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: 0.2s;
+}
+
+#movie-search:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255,60,110,0.1);
+}
+
+.movie-search-icon {
+  position: absolute;
+  left: 2.3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* CATS BAR - scrollável horizontal */
+#movie-cats-bar {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.8rem 1.5rem;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+#movie-cats-bar::-webkit-scrollbar { display: none; }
+
+.movie-cat-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.movie-cat-pill:hover {
+  border-color: rgba(255,60,110,0.3);
+  color: var(--text);
+  background: #1e1e35;
+}
+
+.movie-cat-pill.active {
+  background: rgba(255,60,110,0.1);
+  border-color: rgba(255,60,110,0.35);
+  color: var(--accent);
+}
+
+.movie-cat-count {
+  background: rgba(255,255,255,0.06);
+  padding: 0.05rem 0.4rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-family: monospace;
+}
+
+/* BREADCRUMB */
+#movie-breadcrumb {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+#movie-breadcrumb .vbc-current { color: var(--text); font-weight: 600; }
+#movie-breadcrumb .vbc-home { cursor: pointer; }
+#movie-breadcrumb .vbc-home:hover { color: var(--text); }
+
+/* CONTENT AREA */
+#movie-content {
+  padding: 1.5rem;
+  min-height: 400px;
+}
+
+/* SECTION */
+.movie-section-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 1.5rem 0 1rem;
+}
+
+.movie-section-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: Georgia, serif;
+  letter-spacing: 0.02em;
+}
+
+.movie-section-badge {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-family: monospace;
+  color: var(--muted);
+}
+
+.movie-section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* GRID PRINCIPAL */
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+/* CARD */
+.movie-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.movie-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,60,110,0.3);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+}
+
+.movie-card-cover {
+  aspect-ratio: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.movie-cover-gen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.movie-cover-shape {
+  font-size: 2.5rem;
+  opacity: 0.12;
+  position: absolute;
+}
+
+.movie-cover-text {
+  font-family: Georgia, serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 0.4rem;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.2;
+  word-break: break-word;
+  max-width: 90%;
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+
+.movie-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 55%);
+  opacity: 0;
+  transition: 0.2s;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.8rem;
+}
+
+.movie-card:hover .movie-card-overlay { opacity: 1; }
+
+.movie-dl-btn-small {
+  width: 100%;
+  background: var(--accent);
+  color: #000 !important;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-decoration: none !important;
+  display: block;
+  text-align: center;
+}
+
+.movie-card-info { padding: 0.8rem; }
+.movie-card-title {
+  font-weight: 600;
+  font-size: 0.82rem;
+  margin-bottom: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text);
+}
+.movie-card-year {
+  font-size: 0.7rem;
+  color: var(--accent2);
+  margin-bottom: 0.4rem;
+}
+.movie-card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.movie-card-dl-direct {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--accent) !important;
+  background: rgba(255,60,110,0.08);
+  border: 1px solid rgba(255,60,110,0.2);
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-decoration: none !important;
+  transition: 0.15s;
+  letter-spacing: 0.03em;
+}
+.movie-card-dl-direct:hover {
+  background: var(--accent);
+  color: #000 !important;
+  border-color: var(--accent);
+}
+.movie-badge-quality {
+  font-size: 0.6rem;
+  font-family: monospace;
+  color: var(--accent3);
+  background: rgba(60,158,255,0.08);
+  border: 1px solid rgba(60,158,255,0.15);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+/* TOP LIST */
+.movie-top-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+
+.movie-top-item {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.movie-top-item:hover {
+  border-color: rgba(255,60,110,0.3);
+  background: var(--bg3);
+  transform: translateX(4px);
+}
+
+.movie-top-rank {
+  font-family: Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.06);
+  width: 36px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.movie-top-mini-cover {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.movie-top-info { flex: 1; overflow: hidden; }
+.movie-top-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.2rem;
+}
+.movie-top-year { font-size: 0.7rem; color: var(--accent2); }
+
+.movie-top-dl {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text) !important;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-decoration: none !important;
+  display: inline-block;
+}
+.movie-top-dl:hover { background: var(--accent); color: #000 !important; border-color: var(--accent); }
+
+/* CAT GRID HOME */
+.movie-cat-grid-home {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.8rem;
+}
+
+.movie-cat-card-home {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.movie-cat-card-home:hover {
+  border-color: rgba(255,60,110,0.3);
+  transform: translateY(-2px);
+  background: var(--bg3);
+}
+.movie-cat-emoji { font-size: 1.6rem; margin-bottom: 0.4rem; }
+.movie-cat-name { font-weight: 600; font-size: 0.8rem; margin-bottom: 0.2rem; color: var(--text); }
+.movie-cat-cnt { font-size: 0.68rem; color: var(--muted); }
+
+/* MODAL */
+#movie-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  backdrop-filter: blur(14px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+#movie-modal-overlay.open { display: flex; }
+
+#movie-modal {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 400px;
+  overflow: hidden;
+  animation: mmodalin 0.22s ease;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+}
+@keyframes mmodalin {
+  from{opacity:0;transform:scale(0.95) translateY(8px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+#movie-modal-art {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+
+.movie-modal-close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: white;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.movie-modal-close:hover { background: rgba(255,255,255,0.15); }
+
+.movie-modal-body { padding: 1.2rem 1.2rem 1.5rem; }
+
+#movie-modal-cat {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  font-family: monospace;
+  margin-bottom: 0.3rem;
+}
+#movie-modal-title {
+  font-family: Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+  color: var(--text);
+}
+#movie-modal-year { color: var(--accent2); font-size: 0.8rem; margin-bottom: 1rem; }
+
+.movie-modal-actions { display: flex; flex-direction: column; gap: 0.6rem; }
+
+#movie-btn-dl {
+  width: 100%;
+  background: var(--accent);
+  color: #000 !important;
+  border: none;
+  padding: 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: 0.15s;
+  letter-spacing: 0.05em;
+  text-decoration: none !important;
+  display: block;
+  text-align: center;
+}
+#movie-btn-dl:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(255,60,110,0.35); }
+
+#movie-btn-copy {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.15s;
+}
+#movie-btn-copy:hover { border-color: rgba(255,255,255,0.2); background: var(--bg3); }
+
+/* TOASTS */
+#movie-toasts {
+  position: fixed;
+  bottom: 1.2rem;
+  right: 1.2rem;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  pointer-events: none;
+}
+
+.movie-toast {
+  background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-left: 3px solid var(--accent);
+  padding: 0.7rem 1rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  max-width: 260px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  animation: mtoast 0.2s ease;
+  color: var(--text);
+}
+.movie-toast.pink { border-left-color: var(--accent2); }
+.movie-toast.green { border-left-color: var(--accent3); }
+@keyframes mtoast {
+  from{transform:translateX(25px);opacity:0}
+  to{transform:translateX(0);opacity:1}
+}
+
+/* EMPTY */
+.movie-empty { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+.movie-empty-icon { font-size: 2.5rem; margin-bottom: 0.8rem; opacity: 0.3; }
+
+/* SCROLLBAR */
+#movie-app ::-webkit-scrollbar { width: 4px; height: 4px; }
+#movie-app ::-webkit-scrollbar-track { background: var(--bg); }
+#movie-app ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  #movie-content { padding: 1rem; }
+  .movie-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 0.7rem; }
+  .movie-stats { display: none; }
+  .movie-top-rank { display: none; }
+  #movie-topbar { padding: 0.6rem 1rem; }
+}
+</style>
+
+<!-- FONTES -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+
+<!-- APP -->
+<div id="movie-app">
+
+  <!-- TOPBAR -->
+  <div id="movie-topbar">
+    <div style="display:flex;align-items:center;gap:1rem;">
+      <div class="movie-logo">CINE<div class="movie-logo-dot"></div></div>
+      <div class="movie-online">
+        <div class="movie-online-dot"></div>
+        <span id="movie-online-count">43</span> online
+      </div>
+    </div>
+    <div class="movie-stats">
+      <div class="movie-stat">
+        <div class="movie-stat-n" id="movie-total-filmes">0</div>
+        <div class="movie-stat-l">Filmes</div>
+      </div>
+      <div class="movie-stat">
+        <div class="movie-stat-n" id="movie-total-cats">0</div>
+        <div class="movie-stat-l">Categorias</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="movie-search-wrap">
+    <span class="movie-search-icon">🎬</span>
+    <input id="movie-search" type="text" placeholder="Buscar filme, categoria..." autocomplete="off"/>
+  </div>
+
+  <!-- CATS BAR -->
+  <div id="movie-cats-bar"></div>
+
+  <!-- BREADCRUMB -->
+  <div id="movie-breadcrumb">
+    <span class="vbc-home" onclick="mShowHome()">Início</span>
+  </div>
+
+  <!-- CONTENT -->
+  <div id="movie-content"></div>
+
+</div>
+
+<!-- MODAL -->
+<div id="movie-modal-overlay" onclick="mHandleModalClick(event)">
+  <div id="movie-modal">
+    <div id="movie-modal-art">
+      <button class="movie-modal-close" onclick="mCloseModal()">✕</button>
+    </div>
+    <div class="movie-modal-body">
+      <div id="movie-modal-cat"></div>
+      <div id="movie-modal-title"></div>
+      <div id="movie-modal-year"></div>
+      <div class="movie-modal-actions">
+        <a id="movie-btn-dl" href="#" target="_blank" rel="noopener noreferrer">⬇ BAIXAR AGORA</a>
+        <button id="movie-btn-copy">🔗 Copiar link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="movie-toasts"></div>
+
+<script>
+(function(){
+// ============ CATEGORIAS ============
+var CATS=[
+  {id:"acao",nome:"Ação",icon:"🔫"},
+  {id:"terror",nome:"Terror & Suspense",icon:"🔪"},
+  {id:"ficcao",nome:"Ficção",icon:"🚀"},
+  {id:"classicos",nome:"Clássicos",icon:"🎬"},
+  {id:"comedia",nome:"Comédia",icon:"😂"},
+  {id:"brasileiros",nome:"Brasileiros",icon:"🇧🇷"},
+  {id:"terrorclassico",nome:"Terror Clássico",icon:"🩸"},
+  {id:"play",nome:"Play",icon:"🎮"}
+];
+
+// ============ FILMES ============
+var FILMES = [];
+
+// AÇÃO
+FILMES.push({id:1,t:"Missao de Sobrevivencia",ano:"2023",cat:"acao",link:"https://1024terabox.com/s/1jRecQ1wvLJR34mi2Moq26A"});
+FILMES.push({id:2,t:"O Profissional",ano:"1994",cat:"acao",link:"https://1024terabox.com/s/1jTrFY5WMwBjTR-2YYtVuzQ"});
+FILMES.push({id:3,t:"John Wick - Um Novo Dia para Matar",ano:"2017",cat:"acao",link:"https://1024terabox.com/s/1G6f8Yj8wqqowVy7t3YAkJw"});
+FILMES.push({id:4,t:"Um Tira da Pesada 4 - Axel Foley",ano:"2024",cat:"acao",link:"https://1024terabox.com/s/1_RUUt7-a42r5IM5vDQBlVQ"});
+FILMES.push({id:5,t:"Papillon",ano:"2018",cat:"acao",link:"https://1024terabox.com/s/1AzKOG2Q2QY8mAe477GnbDg"});
+FILMES.push({id:6,t:"RONIN",ano:"1998",cat:"acao",link:"https://1024terabox.com/s/1YzIx_tEsT2-BYFw4ig7RBw"});
+FILMES.push({id:7,t:"Colateral",ano:"2024",cat:"acao",link:"https://1024terabox.com/s/1R3KLDfB8B4WnaUjRJzvdPA"});
+FILMES.push({id:8,t:"Instinto Assassino",ano:"2021",cat:"acao",link:"https://1024terabox.com/s/1G4KAqmPXDbaB1onu0WkYwQ"});
+FILMES.push({id:9,t:"O Irlandês",ano:"2019",cat:"acao",link:"https://1024terabox.com/s/1-JZlsP4EYZ3YE8T6bXeHDQ"});
+FILMES.push({id:10,t:"Assassinos Por Natureza",ano:"1994",cat:"acao",link:"https://1024terabox.com/s/1WojSgl1JBqKHae2yxCCs6A"});
+FILMES.push({id:11,t:"Alerta Maximo",ano:"2023",cat:"acao",link:"https://1024terabox.com/s/1t8b-g1BGannamaYnv_YYsA"});
+FILMES.push({id:12,t:"Sisu - Uma História De Determinação",ano:"2023",cat:"acao",link:"https://1024terabox.com/s/1N2EuqM-DSdOM7M5Zohc40g"});
+FILMES.push({id:13,t:"A Rocha",ano:"1996",cat:"acao",link:"https://1024terabox.com/s/1bZ0EwG9giaUcxn71VYbcBw"});
+FILMES.push({id:14,t:"Asfalto de Sangue",ano:"2019",cat:"acao",link:"https://1024terabox.com/s/1gIn3ZjSvj0OlGIoB_pskug"});
+FILMES.push({id:15,t:"O Menino Do Pijama Listrado",ano:"2008",cat:"acao",link:"https://1024terabox.com/s/1RMGWuX3N_AgkzUm5UvQXgg"});
+FILMES.push({id:16,t:"Senhor das Armas",ano:"2005",cat:"acao",link:"https://1024terabox.com/s/1WEW26cQEpVFCUwTZQVZIXQ"});
+FILMES.push({id:17,t:"60 Segundos",ano:"2000",cat:"acao",link:"https://1024terabox.com/s/1im8x6uvgMsqzV1Av-XQjNg"});
+FILMES.push({id:18,t:"O Pianista",ano:"2002",cat:"acao",link:"https://1024terabox.com/s/1JRwvpU5AbwciwocguXv7yg"});
+FILMES.push({id:19,t:"A Colônia",ano:"1997",cat:"acao",link:"https://1024terabox.com/s/1t0KgNW8TPuCRjL2qqV3Ztg"});
+FILMES.push({id:20,t:"Perigo Próximo",ano:"2016",cat:"acao",link:"https://1024terabox.com/s/1v7u9H5t9jd4u4Z5YfI8zdw"});
+FILMES.push({id:21,t:"Con Air - A Rota da Fuga",ano:"1997",cat:"acao",link:"https://1024terabox.com/s/1GRQbrOiedbtugVt5z-rJqQ"});
+FILMES.push({id:22,t:"Bad Boys Para Sempre",ano:"2020",cat:"acao",link:"https://1024terabox.com/s/1hFXVjCl783Splq8DG8q7Dg"});
+FILMES.push({id:23,t:"Django Livre",ano:"2012",cat:"acao",link:"https://1024terabox.com/s/1lfih1a8FuH5JvtW9zfd90Q"});
+FILMES.push({id:24,t:"Código de Conduta",ano:"2009",cat:"acao",link:"https://1024terabox.com/s/1ar4Kn9PhL_6qb1QapwMBog"});
+FILMES.push({id:25,t:"Perigo para Sociedade",ano:"1993",cat:"acao",link:"https://1024terabox.com/s/1JXPVmd7gopClRR3LLvzJiQ"});
+FILMES.push({id:26,t:"A Viatura",ano:"2015",cat:"acao",link:"https://1024terabox.com/s/1qp5nXaYq2DMlqTKpFV2i4w"});
+FILMES.push({id:27,t:"Bastardos Inglorios",ano:"2009",cat:"acao",link:"https://1024terabox.com/s/13PsAa8yxnZzJo7L5owGbvA"});
+FILMES.push({id:28,t:"A Outra Face",ano:"1997",cat:"acao",link:"https://1024terabox.com/s/1nI0ODnzx8kbRfcAfSSOfvQ"});
+FILMES.push({id:29,t:"Assalto ao 13 Distrito",ano:"2005",cat:"acao",link:"https://1024terabox.com/s/1DPOE_jK2RSefglawTnfVhA"});
+FILMES.push({id:30,t:"Onde Os Fracos Não Tem Vez",ano:"2007",cat:"acao",link:"https://1024terabox.com/s/1VaHoHbOnFz8IMbWvLZ8i6g"});
+FILMES.push({id:31,t:"Quatro Irmãos",ano:"2005",cat:"acao",link:"https://1024terabox.com/s/1_a9LugdMgNqNMJrgB9N7VA"});
+FILMES.push({id:32,t:"Diário de um Adolescente",ano:"1995",cat:"acao",link:"https://1024terabox.com/s/10VXdm1848ID9wtEUXddADg"});
+FILMES.push({id:33,t:"Dupla Implacável",ano:"2010",cat:"acao",link:"https://1024terabox.com/s/1K4U-8L6sEYxz7HdLyYNQbw"});
+
+// PUMPKINHEAD
+FILMES.push({id:34,t:"PumpkinHead 2 - O Retorno",ano:"Legendado",cat:"terror",link:"https://1024terabox.com/s/1zeDTioFUXJ3r4c2KPYK5Ew"});
+FILMES.push({id:35,t:"Pumpkinhead 4 - Maldição Sangrenta",ano:"2007",cat:"terror",link:"https://1024terabox.com/s/16bIrGgDSI18tC9hbLp4RMA"});
+FILMES.push({id:36,t:"Pumpkinhead 3 - De Volta Das Cinzas",ano:"2006",cat:"terror",link:"https://1024terabox.com/s/1fdQDkoIptRmTRhrjsOyozQ"});
+FILMES.push({id:37,t:"Pumpkinhead - A Vingança do Diabo",ano:"1988",cat:"terror",link:"https://1024terabox.com/s/15GUInMfXaw3CaDm2kCnuDw"});
+
+// TERROR
+FILMES.push({id:38,t:"Amuleto",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/167mkpKe-mNnM3dN4N_DHAw"});
+FILMES.push({id:39,t:"Sinais",ano:"2002",cat:"terror",link:"https://1024terabox.com/s/1fmTjgRf1Z4MF6H5vgbanDg"});
+FILMES.push({id:40,t:"Cemiterio Maldito - A Origem",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1BVAaHk5aWBj57eh5tgOCHw"});
+FILMES.push({id:41,t:"A Bruxa dos Mortos Baghead",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1tMoXgSBKYaV_Rev6w7xpVw"});
+FILMES.push({id:42,t:"O Segredo da Floresta",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1NC64fdTuP-fGhxNbsqzNmA"});
+FILMES.push({id:43,t:"Forcas Malignas",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/1CqGssGRWEc6UzC5ZYgg7iQ"});
+FILMES.push({id:44,t:"Grito Silencioso",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/13UmhW9Rxn0IaWJOsVYoJNw"});
+FILMES.push({id:45,t:"Ninho do Mal",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1CsmD_A2PzB9AHxZ6s3d_bw"});
+FILMES.push({id:46,t:"O Demonio Entre Nos",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1IyraO4ql6-SSd3SXVWZOUw"});
+FILMES.push({id:47,t:"Espíritos A Morte Está Ao Seu Lado",ano:"2004",cat:"terror",link:"https://1024terabox.com/s/1svk9ijpKmrfbQCz5_zTrng"});
+FILMES.push({id:48,t:"Acampamento do Terror",ano:"2016",cat:"terror",link:"https://1024terabox.com/s/1hqzDX_24geQznplLIqIWnw"});
+FILMES.push({id:49,t:"Não Não Olhe",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1wirWnz-oyY9no8_eWH5QLA"});
+FILMES.push({id:50,t:"Sangue Frio",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1cmkFhex5EXApUNjb0ZeW8Q"});
+FILMES.push({id:51,t:"O Telefone Preto",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1hL224zQGkkc_nqJAC8UIhw"});
+FILMES.push({id:52,t:"O Hotel do Terror",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/1lP8mhjNzSPuN9wQq9hZ8CQ"});
+FILMES.push({id:53,t:"Boogeyman Seu Medo é Real",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1sQ8OHpFIDoLVFrA5dbR9Mw"});
+FILMES.push({id:54,t:"O Chamado 4 - Samara Ressurge",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1i5VxtzOj2ORRCTO4SyMkCw"});
+FILMES.push({id:55,t:"Medo",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1AX8D6pDinvTOP_kiVUep9Q"});
+FILMES.push({id:56,t:"A Avó",ano:"2021",cat:"terror",link:"https://1024terabox.com/s/1iGhJybnOts-IDXfHIEfgyg"});
+FILMES.push({id:57,t:"Visoes Mortais",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1WIoYXbUPX9W-QA3jxysPcg"});
+FILMES.push({id:58,t:"A Morte do Demônio - A Ascensão",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1Wcv96YWlQXb51XogsRxwrQ"});
+FILMES.push({id:59,t:"Sobrenatural - A Porta Vermelha",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1ZHlSTmp37BCZaNGfLDxQrQ"});
+FILMES.push({id:60,t:"Frio nos Ossos",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1XLVby4xipo6hb5TbKGfRFw"});
+FILMES.push({id:61,t:"Invocação do Mal 3 - A Ordem do Demônio",ano:"2021",cat:"terror",link:"https://1024terabox.com/s/18MXN1xFuZsnD7ylNr9CTrQ"});
+FILMES.push({id:62,t:"Sua Alma Será Minha",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1vJ-wVVVbJicf5az5CNs-kg"});
+FILMES.push({id:63,t:"Não Abra!",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/16ALxEbtOF51RSvEzR-ZUuA"});
+FILMES.push({id:64,t:"A Maldição da Bruxa",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/1AmabrrcL67ZsZpGKco4roA"});
+FILMES.push({id:65,t:"M3GAN",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1neDBM6u_C44bhFcTZdPKsA"});
+FILMES.push({id:66,t:"Predadores",ano:"2010",cat:"terror",link:"https://1024terabox.com/s/19RFbvduRey0qY1SOzZNLxw"});
+FILMES.push({id:67,t:"Men - Faces do Medo",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1EBPx3tb_CfFeuSz1LIrRPw"});
+FILMES.push({id:68,t:"Bird Box",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/1gM4issh88rf_vj7KEjO_ng"});
+FILMES.push({id:69,t:"Os Observadores",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/1U1pirOVxXW9-HMsfUSzEQg"});
+FILMES.push({id:70,t:"A Freira 2",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1UFTVzdjOvS-7ZRHXUEJZAw"});
+FILMES.push({id:71,t:"O Acampamento do Medo",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1TZS13h2isEtLASWe-RXMpA"});
+FILMES.push({id:72,t:"A Maldição do Titanic",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1o30FwZrAVd-V5SAnrcfrgQ"});
+FILMES.push({id:73,t:"A Libertação",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/131nA96peRk7BQ4fQknwiNQ"});
+FILMES.push({id:74,t:"A Menina Do Mar",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/13B6ze9p9TjwKwa-OlOInjg"});
+FILMES.push({id:75,t:"Dentro",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1KDMoPr-bVmwF05Cdyt97vA"});
+FILMES.push({id:76,t:"Terror No Deserto",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/18WcEMqi9jLZ374vx6R67Eg"});
+FILMES.push({id:77,t:"Fale Comigo",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/126CpVm1r3K85nlztjk41aw"});
+FILMES.push({id:78,t:"Hellblazers O Inferno na Terra",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/189qSNPwkNqYYQQziWnX5TQ"});
+FILMES.push({id:79,t:"X - A Marca da Morte",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/16aOo76vqq_NiYLEvzdXWtQ"});
+FILMES.push({id:80,t:"Entrevista com o Demônio",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1n1ZWSr5yxq-C5vfhmNWB_g"});
+FILMES.push({id:81,t:"Castigos da Traição",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1ffjdahhkaABjkEko7at1cw"});
+FILMES.push({id:82,t:"O Tarô da Morte",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/1rtytGmNVHtTMXF0khxvQ4A"});
+FILMES.push({id:83,t:"Rua dos Pecados",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1ZSCyMTcatnu_KOiXUN6c7g"});
+FILMES.push({id:84,t:"Arcadian Depois do Apocalipse",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/1iTUiu0x0guV_AQ8ONh4nWA"});
+FILMES.push({id:85,t:"O Meme do Mal",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1-AG04f4FpIwx3QFwBtrW1g"});
+FILMES.push({id:86,t:"Espíritos Obscuros",ano:"2021",cat:"terror",link:"https://1024terabox.com/s/11AmHeaGIgdRQLExvSgJaiw"});
+FILMES.push({id:87,t:"A Casa Sombria",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1F5h9PYetE6WINLdzRaPb_w"});
+FILMES.push({id:88,t:"Cemitério Maldito",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1AHvPBUkKWSI-Lg0TtMx5bg"});
+FILMES.push({id:89,t:"Cidade das Trevas",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1D-8vRE7vOeNDjIa_kfcExA"});
+FILMES.push({id:90,t:"A Casa Mal Assombrada",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/17pQKZfhRhpLdtj0rT-U51A"});
+FILMES.push({id:91,t:"Isca",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/1Emhhax0V4W3zNNP_7ooGkA"});
+FILMES.push({id:92,t:"O Jogo do Elevador",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1lVE2jI1svE86BJ0eV3A3sw"});
+FILMES.push({id:93,t:"O Concerto Maldito, Sinfonia do Mal",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/1upeWh5AEXa2t24jTUjUOIQ"});
+FILMES.push({id:94,t:"A Luz do Demônio",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/193da9JpO4wMklupw_PWf0A"});
+FILMES.push({id:95,t:"O Nevoeiro",ano:"2008",cat:"terror",link:"https://1024terabox.com/s/1TStYNzzwnjEOQCBzaDHVrw"});
+FILMES.push({id:96,t:"A Câmera do Demônio",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1FKX36woIfMKBY5VAMHOj1A"});
+FILMES.push({id:97,t:"Vozes",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/13aP2Xd_Z4IifUTm9GDX0IQ"});
+FILMES.push({id:98,t:"Lenda Maldita",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/14BwSeBZGzuuX-M83tF3HQA"});
+FILMES.push({id:99,t:"IT Capítulo Dois",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1ZjcJ7hQ-NBegf68_oWDrkw"});
+FILMES.push({id:100,t:"Oracle",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1ZjcJ7hQ-NBegf68_oWDrkw"});
+FILMES.push({id:101,t:"A Maldição da Torre",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1qg70_EDMDFoRJAK2oDNqWg"});
+FILMES.push({id:102,t:"A Matriarca",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1iBqblHOjdCA7UyuxFfdVmg"});
+FILMES.push({id:103,t:"Kadaver",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/17E0wa0YRrO4F79ten9xi5Q"});
+FILMES.push({id:104,t:"Predador",ano:"2004",cat:"terror",link:"https://1024terabox.com/s/13Iiqa-Q6cqV_1z5177yjUA"});
+FILMES.push({id:105,t:"Nas Profundezas do Abismo",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/13N4BCLDE3SBDdpSoARa71Q"});
+FILMES.push({id:106,t:"A Possessão",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1-NyMlkl8TpWjqzpxYE3L7g"});
+FILMES.push({id:107,t:"A Casa do Medo - Incidente em Ghostland",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1Vx3dnwgJ1CYwYxeTggAV4Q"});
+FILMES.push({id:108,t:"A Sombra do Mal",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/1Bjnb7JlTG-zjTYRX25XkwQ"});
+FILMES.push({id:109,t:"Hellraiser O Julgamento",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/1bGKfPMaEtz1mHLTqYtsb7g"});
+FILMES.push({id:110,t:"Parque do Inferno",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/1mPlMHyrAyQBkCadMy7i4gQ"});
+FILMES.push({id:111,t:"Campo Do Medo",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1ZpD9W5-_ZShQo0teSY8r9A"});
+FILMES.push({id:112,t:"A Visita",ano:"2015",cat:"terror",link:"https://1024terabox.com/s/1AMzg0TASX3dMzqlPHDDZlg"});
+FILMES.push({id:113,t:"Ilha Do Medo",ano:"2010",cat:"terror",link:"https://1024terabox.com/s/1ep5siMoEv3BVlYJ6eT3dJg"});
+FILMES.push({id:114,t:"Olhos Famintos",ano:"",cat:"terror",link:"https://1024terabox.com/s/1GqWY3w_MkuSGCi-KKW23uw"});
+FILMES.push({id:115,t:"Pânico no Deserto",ano:"2005",cat:"terror",link:"https://1024terabox.com/s/1c-TWg0oYoercSvQtbzSvew"});
+FILMES.push({id:116,t:"A Maldição da Chorona",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1N2j0ZytzjMgQIK4ptW1PVQ"});
+FILMES.push({id:117,t:"O Manicomio",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/17Y6DiKksgdZNxHjPrbKrow"});
+FILMES.push({id:118,t:"Ninguém Vai Te Salvar",ano:"2023",cat:"terror",link:"https://1024terabox.com/s/16GXuGkmtjRj71MqlRmRXyA"});
+FILMES.push({id:119,t:"A Casa da Morte",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1ZmdhbG5oCCer_BnUJ-Op9A"});
+FILMES.push({id:120,t:"Cabana Macabra",ano:"2008",cat:"terror",link:"https://1024terabox.com/s/1rG889mTz4ZHpGXATUXvE3g"});
+FILMES.push({id:121,t:"O Ritual do Livro Vermelho",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1RwyLYe3OfosKtPtg8mDApw"});
+FILMES.push({id:122,t:"Minotauro",ano:"2006",cat:"terror",link:"https://1024terabox.com/s/1YCrMjBwBnk5OOXIhryUYvg"});
+FILMES.push({id:123,t:"Perfume, História de um Assassino",ano:"2006",cat:"terror",link:"https://1024terabox.com/s/1qhVUjUVQhaOZ3qh6cV7csw"});
+FILMES.push({id:124,t:"A Maldição De Amélia - O Outro Lado dos Trilhos",ano:"",cat:"terror",link:"https://1024terabox.com/s/1XCzn21p0h_vY_PBIlSoP9A"});
+FILMES.push({id:125,t:"O Novo Pesadelo - O Retorno De Freddy Krueger",ano:"1994",cat:"terror",link:"https://1024terabox.com/s/1dPw9WC1UXcwVnGaF1B-65Q"});
+FILMES.push({id:126,t:"Os Outros",ano:"2001",cat:"terror",link:"https://1024terabox.com/s/19ysb05SN27B34w-2Ejl01A"});
+FILMES.push({id:127,t:"Annabelle - De Volta para Casa",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/14uMiee4-s-RiQjwYmFbs8Q"});
+FILMES.push({id:128,t:"Triângulo do Medo",ano:"2009",cat:"terror",link:"https://1024terabox.com/s/1RG2Vt_E2FrUgV6yjkbcvUA"});
+FILMES.push({id:129,t:"IT A Coisa",ano:"",cat:"terror",link:"https://1024terabox.com/s/1L1Y81rwN0tiBeFWTVVCp6w"});
+FILMES.push({id:130,t:"O Covil",ano:"2021",cat:"terror",link:"https://1024terabox.com/s/1B35rxzI1tynToxt8ez_VCw"});
+FILMES.push({id:131,t:"Vertigem",ano:"2009",cat:"terror",link:"https://1024terabox.com/s/181UZDcKmg1yt4gBGUE0TyA"});
+FILMES.push({id:132,t:"Sem Conexao",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1PGEn5LnsRRnFYw-lSQjhFw"});
+FILMES.push({id:133,t:"Invocação Do Mal 4 - O Último Ritual",ano:"2025",cat:"terror",link:"https://1024terabox.com/s/16yQ-dikZIB_e4I4Dmn7cug"});
+FILMES.push({id:134,t:"A Freira",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/1lux6dWidUFi1TZZK8chdMg"});
+FILMES.push({id:135,t:"Os Olhos de Júlia",ano:"2010",cat:"terror",link:"https://1024terabox.com/s/1SzkntDJXzG6Sl2H6jC5YtA"});
+FILMES.push({id:136,t:"Outback",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1E0mmquSnCEFDWXTvHi_KHA"});
+FILMES.push({id:137,t:"Encontro Arriscado",ano:"2021",cat:"terror",link:"https://1024terabox.com/s/17SXlNfCKv0yxiAAWQcAnQw"});
+FILMES.push({id:138,t:"Constantine",ano:"2005",cat:"terror",link:"https://1024terabox.com/s/1eZegA5FsM4_R79U2AE68gg"});
+FILMES.push({id:139,t:"Sem Rastros",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1LyeEvpXDlp9HY_mB_g89vA"});
+FILMES.push({id:140,t:"Presságio",ano:"2009",cat:"terror",link:"https://1024terabox.com/s/1xefVbPZvHrLmgIrlY3UWig"});
+FILMES.push({id:141,t:"A Maldição de Savannah",ano:"2021",cat:"terror",link:"https://1024terabox.com/s/1_qm-BJLOde1VZm_o70ahkQ"});
+FILMES.push({id:142,t:"A Herança",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/10w6P1i1aBg890StQqDJChg"});
+FILMES.push({id:143,t:"Cães Assassinos",ano:"2006",cat:"terror",link:"https://1024terabox.com/s/1Gp88WyJFysBtnFCd8YXniw"});
+FILMES.push({id:144,t:"O Chamado Vs. O Grito",ano:"2016",cat:"terror",link:"https://1024terabox.com/s/1ZodArONXD8VWzRA1qa5fnQ"});
+FILMES.push({id:145,t:"O Desaparecimento - O Mistério Do Farol",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1EXNrxXcukq_fdDhk2Pe6KA"});
+FILMES.push({id:146,t:"A Bruxa",ano:"2015",cat:"terror",link:"https://1024terabox.com/s/14-76EDoNJ5f65zQ601Y-qg"});
+FILMES.push({id:147,t:"ESPINHOS",ano:"2008",cat:"terror",link:"https://1024terabox.com/s/1Tj3ozcBBLjNXWI36SUr6kg"});
+FILMES.push({id:148,t:"O Campo Da Morte",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1C2_D9YSx6zOwz61qOtuMOg"});
+FILMES.push({id:149,t:"1922",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/1bXZi3oFLSn0Pe30D-vvaWg"});
+FILMES.push({id:150,t:"Jason X",ano:"2001",cat:"terror",link:"https://1024terabox.com/s/1Zv1xATg3t8jjIR_4BVubZg"});
+FILMES.push({id:151,t:"Noites Brutais",ano:"2022",cat:"terror",link:"https://1024terabox.com/s/1DrNqlsslpTNWj5vDe7UJcw"});
+FILMES.push({id:152,t:"Mama",ano:"2013",cat:"terror",link:"https://1024terabox.com/s/1Z50vS69MbNHEWoYnnH0DSQ"});
+FILMES.push({id:153,t:"Nails - O Colecionador De Unhas",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/1_jVWptZxFPgsHnaJzjeVtg"});
+FILMES.push({id:154,t:"Garota Infernal",ano:"2009",cat:"terror",link:"https://1024terabox.com/s/1g4S65gY0UReTVdKBqAFykw"});
+FILMES.push({id:155,t:"Espelhos do Medo 2",ano:"",cat:"terror",link:"https://1024terabox.com/s/1d2WWRmyB-4tqvzasZ0mN3g"});
+FILMES.push({id:156,t:"O Grito da Morte",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/1sfwKre41vv--AuzK1bQZ-A"});
+FILMES.push({id:157,t:"Alive",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/113gxHSJxcEOpdnkQeEm4xA"});
+FILMES.push({id:158,t:"Navio Fantasma",ano:"2002",cat:"terror",link:"https://1024terabox.com/s/1JqnowvZaS4rczEXTCAHTJw"});
+FILMES.push({id:159,t:"Maligno",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1qCmuwnaY1qzhYEes9VnksQ"});
+FILMES.push({id:160,t:"Terra Dos Mortos",ano:"",cat:"terror",link:"https://1024terabox.com/s/1hWID89fuqIJpzUeA9wNVag"});
+FILMES.push({id:161,t:"A Morte do Demônio",ano:"2013",cat:"terror",link:"https://1024terabox.com/s/1x3EQz37x9ooW0XJG_F7RSA"});
+FILMES.push({id:162,t:"A Colheita Do Mal",ano:"2007",cat:"terror",link:"https://1024terabox.com/s/1ip6jOZeT0MoT_GUZJ26uig"});
+FILMES.push({id:163,t:"O Enviado Do Mal",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/1bYVMJajn0pmZaWOZhqZwBg"});
+FILMES.push({id:164,t:"Demonio",ano:"2010",cat:"terror",link:"https://1024terabox.com/s/1q47020UQRsSZFiypcvdKhQ"});
+FILMES.push({id:165,t:"Sono Mortal",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/1HDf4ur879qbUbTk-3dUORg"});
+FILMES.push({id:166,t:"O Atalho",ano:"2020",cat:"terror",link:"https://1024terabox.com/s/1cn5WOvyMVbX587Baj9HB6Q"});
+FILMES.push({id:167,t:"Espelhos do Medo",ano:"",cat:"terror",link:"https://1024terabox.com/s/1IITjSDCjK60hQO22Q9Hv6g"});
+FILMES.push({id:168,t:"Lenda Urbana 2",ano:"2000",cat:"terror",link:"https://1024terabox.com/s/1CrHkl56lGstxBriTs3rpsQ"});
+FILMES.push({id:169,t:"Mãe!",ano:"2017",cat:"terror",link:"https://1024terabox.com/s/13cFdIJjf4kKXc6lhRbM_Fw"});
+FILMES.push({id:170,t:"Imaculada",ano:"2024",cat:"terror",link:"https://1024terabox.com/s/1Uhh-LXHBuhwgcAO8i7KK9g"});
+FILMES.push({id:171,t:"O Espantalho",ano:"2011",cat:"terror",link:"https://1024terabox.com/s/1AS4NrvH6WqoNpyN3HZmdlw"});
+FILMES.push({id:172,t:"Olhos Famintos 2",ano:"2003",cat:"terror",link:"https://1024terabox.com/s/1oBwXQaN6Tvagr0FypFXUaw"});
+FILMES.push({id:173,t:"O Padrasto",ano:"2009",cat:"terror",link:"https://1024terabox.com/s/1j4f1WL54lVV51xGqSjFvOw"});
+FILMES.push({id:174,t:"O Quarto do Bebê",ano:"2006",cat:"terror",link:"https://1024terabox.com/s/17LHiqasG9tuEC1dfwEWZrg"});
+FILMES.push({id:175,t:"Terror em Mercy Falls",ano:"2005",cat:"terror",link:"https://1024terabox.com/s/1IHJF4xEc_j1jEcB09RZ8Ww"});
+FILMES.push({id:176,t:"Arraste-Me Para o Inferno",ano:"2009",cat:"terror",link:"https://1024terabox.com/s/1BuAZOmgXhQGXI4Vq6L272g"});
+FILMES.push({id:177,t:"Vende-se Esta Casa",ano:"2018",cat:"terror",link:"https://1024terabox.com/s/15iNi-ACVAJPuWBfnyCKqyg"});
+FILMES.push({id:178,t:"O Silêncio",ano:"2019",cat:"terror",link:"https://1024terabox.com/s/1fUZXGvK305jw52jVfckdYA"});
+FILMES.push({id:179,t:"Instinto",ano:"1999",cat:"terror",link:"https://1024terabox.com/s/1d6xTtjEU8J2p26SlXAVMow"});
+
+// FICÇÃO
+FILMES.push({id:180,t:"Adão Negro",ano:"2022",cat:"ficcao",link:"https://1024terabox.com/s/1xXIimsuUR5FtLLipgpgjNg"});
+FILMES.push({id:181,t:"A Caverna - Time Trap",ano:"2018",cat:"ficcao",link:"https://1024terabox.com/s/1tc6FH1CaWtaaE5ha3LScLw"});
+FILMES.push({id:182,t:"John Carter - Entre Dois Mundos",ano:"2012",cat:"ficcao",link:"https://1024terabox.com/s/1IPF8IWXk5IWn7uG0Vu7gMw"});
+FILMES.push({id:183,t:"The Flash",ano:"2023",cat:"ficcao",link:"https://1024terabox.com/s/1o5un4BT2QfyzvU6E3h2mXQ"});
+FILMES.push({id:184,t:"Godzilla x Kong - O Novo Império",ano:"2024",cat:"ficcao",link:"https://1024terabox.com/s/1nnJZnLFpzXn26gyQ28fk2w"});
+FILMES.push({id:185,t:"Moonfall - Ameaça Lunar",ano:"2022",cat:"ficcao",link:"https://1024terabox.com/s/1Jc5tOAGpxueP3qT9KHHnyA"});
+FILMES.push({id:186,t:"Perdido em Marte",ano:"2015",cat:"ficcao",link:"https://1024terabox.com/s/1AINJcmdTpOe5kfdIVwahRg"});
+FILMES.push({id:187,t:"Onde Está Segunda",ano:"2017",cat:"ficcao",link:"https://1024terabox.com/s/1Y36dMx671KYgS20guxZEEA"});
+FILMES.push({id:188,t:"Liga da Justiça",ano:"2017",cat:"ficcao",link:"https://1024terabox.com/s/1Um2R-pTv4mn9R_W2XPcYVA"});
+FILMES.push({id:189,t:"Deadpool and Wolverine",ano:"2024",cat:"ficcao",link:"https://1024terabox.com/s/1i-Z1mHTJt8t2ynD9kzmxpQ"});
+FILMES.push({id:190,t:"2012",ano:"2009",cat:"ficcao",link:"https://1024terabox.com/s/1uhhY0b8ZXQp9ptELEnbXmw"});
+FILMES.push({id:191,t:"65 - Ameaça Pré-Histórica",ano:"2023",cat:"ficcao",link:"https://1024terabox.com/s/1Soj_oRrLXwYzVOZw_2MAoQ"});
+FILMES.push({id:192,t:"Alien Covenant",ano:"2017",cat:"ficcao",link:"https://1024terabox.com/s/1Eq3Ky6ud-z6zWNZUumjUKw"});
+FILMES.push({id:193,t:"Terremoto - A Falha de San Andreas",ano:"2015",cat:"ficcao",link:"https://1024terabox.com/s/1fXfuE58i9fczvSe1lKx3gQ"});
+FILMES.push({id:194,t:"Vingadores - Era De Ultron",ano:"2015",cat:"ficcao",link:"https://1024terabox.com/s/1lYBHJaXxVpcTBMZckE0CSg"});
+FILMES.push({id:195,t:"No Limite do Amanhã",ano:"2014",cat:"ficcao",link:"https://1024terabox.com/s/13ol8F3zExEc_joDUK3sqvw"});
+FILMES.push({id:196,t:"Guerra dos Mundos",ano:"2005",cat:"ficcao",link:"https://1024terabox.com/s/1X0zTqkOUukUg7DfL37276A"});
+FILMES.push({id:197,t:"Independence Day",ano:"1996",cat:"ficcao",link:"https://1024terabox.com/s/1SDVGTNCkk-lOq3UVCFezsQ"});
+FILMES.push({id:198,t:"A Guerra dos Mundos - O Ataque",ano:"2022",cat:"ficcao",link:"https://1024terabox.com/s/1vnRd3bb-A-hey0K9Bsv2Gg"});
+FILMES.push({id:199,t:"10.000 A.C.",ano:"2008",cat:"ficcao",link:"https://1024terabox.com/s/1qjL2B22ofAqMrvPKOJNqrA"});
+FILMES.push({id:200,t:"O Homem De Aço",ano:"2013",cat:"ficcao",link:"https://1024terabox.com/s/1qnbNQwMDHhmiaB-vaN5YzA"});
+FILMES.push({id:201,t:"Hancock",ano:"2008",cat:"ficcao",link:"https://1024terabox.com/s/11bH3y9JnFKOa5c3KGQwyDg"});
+FILMES.push({id:202,t:"Robocop",ano:"2014",cat:"ficcao",link:"https://1024terabox.com/s/1tN5eGykiWEbA3Lv9XtA8lw"});
+FILMES.push({id:203,t:"Fúria de Titãs",ano:"2010",cat:"ficcao",link:"https://1024terabox.com/s/1ETd7xVLYFnOExx0G_pTCfA"});
+FILMES.push({id:204,t:"Planeta dos Macacos - O Confronto",ano:"2014",cat:"ficcao",link:"https://1024terabox.com/s/1OqTg7Qp10HqIMc_9Kdkkkw"});
+FILMES.push({id:205,t:"Cowboys & Aliens",ano:"2011",cat:"ficcao",link:"https://1024terabox.com/s/1psagQa2eP8GORY2z5CZ2cg"});
+FILMES.push({id:206,t:"Terremoto Aracnídeo",ano:"2012",cat:"ficcao",link:"https://1024terabox.com/s/1qY9sS6iPZeNLzB4eLoXNGg"});
+FILMES.push({id:207,t:"Fúria de Titãs 2",ano:"2012",cat:"ficcao",link:"https://1024terabox.com/s/1W2d2MGnPwYbRUHYAzk5joA"});
+FILMES.push({id:208,t:"Além da Escuridão - Star Trek",ano:"2013",cat:"ficcao",link:"https://1024terabox.com/s/134dN9lwPlUCluvNmm1mpbA"});
+FILMES.push({id:209,t:"Planeta dos Macacos - A Origem",ano:"2011",cat:"ficcao",link:"https://1024terabox.com/s/1WKdn1xgyajw5MXdZYuYIDg"});
+FILMES.push({id:210,t:"Planeta dos Macacos",ano:"2001",cat:"ficcao",link:"https://1024terabox.com/s/1FhclNMAOii7x96yTsH4a3w"});
+FILMES.push({id:211,t:"A Máquina do Tempo",ano:"2002",cat:"ficcao",link:"https://1024terabox.com/s/1hx8LJeBYPXfbNRXrbk0uSA"});
+FILMES.push({id:212,t:"Fenda No Tempo",ano:"1995",cat:"ficcao",link:"https://1024terabox.com/s/1sjn2Ez5ArYIJ-JmgjA-o5Q"});
+
+// DE VOLTA PARA O FUTURO
+FILMES.push({id:213,t:"De Volta Para o Futuro",ano:"1985",cat:"ficcao",link:"https://1024terabox.com/s/1fsZjaZhydQkpaqwm1--ICQ"});
+FILMES.push({id:214,t:"De Volta Para o Futuro Part III",ano:"1990",cat:"ficcao",link:"https://1024terabox.com/s/1iza9S9Lrov6HTU5x6Lro0Q"});
+FILMES.push({id:215,t:"De Volta Para o Futuro Part II",ano:"1989",cat:"ficcao",link:"https://1024terabox.com/s/1BEPXtrKTts6RXq5SJTR6eA"});
+
+// COMEDIA
+FILMES.push({id:216,t:"As Branquelas",ano:"2004",cat:"comedia",link:"https://1024terabox.com/s/18ddz9heecvFobkXMkIfAeg"});
+
+// BRASILEIROS
+FILMES.push({id:217,t:"Cidade de Deus",ano:"2002",cat:"brasileiros",link:"https://1024terabox.com/s/10NtkJlRfyj2iW2yFpkD1lw"});
+FILMES.push({id:218,t:"Carandiru",ano:"2003",cat:"brasileiros",link:"https://1024terabox.com/s/1P6xDS93w6SYR2sMdAagOuQ"});
+FILMES.push({id:219,t:"2 Coelhos",ano:"2012",cat:"brasileiros",link:"https://1024terabox.com/s/1lxwPA0KlGx1qPuxv3_7B9g"});
+
+// CLASSICOS
+FILMES.push({id:220,t:"Superman O Filme",ano:"1978",cat:"classicos",link:"https://1024terabox.com/s/1V85dpnVo2iu1TbadqbVjUQ"});
+FILMES.push({id:221,t:"Trinity Ainda é Meu Nome",ano:"1971",cat:"classicos",link:"https://1024terabox.com/s/1KEj02AUB_IEtgZHc2f5YMw"});
+FILMES.push({id:222,t:"Papillon",ano:"1973",cat:"classicos",link:"https://1024terabox.com/s/1geZzEeyVp9Ow3rfjR3se7w"});
+FILMES.push({id:223,t:"Maximum Overdrive",ano:"1986",cat:"classicos",link:"https://1024terabox.com/s/10bD4qFqi4jYQDVkoXTFhag"});
+FILMES.push({id:224,t:"Condenação Brutal",ano:"1989",cat:"classicos",link:"https://1024terabox.com/s/13h3D8tkZAK4Rs4kiT3YGLg"});
+FILMES.push({id:225,t:"Garantia De Morte",ano:"1990",cat:"classicos",link:"https://1024terabox.com/s/1nLC_meL9rHzX-a6O6YrAGQ"});
+FILMES.push({id:226,t:"O Rapto do Menino Dourado",ano:"1986",cat:"classicos",link:"https://1024terabox.com/s/1OoTYjuSjy1AgDfjQqjTsNA"});
+FILMES.push({id:227,t:"Tira Pesadab",ano:"1984",cat:"classicos",link:"https://1024terabox.com/s/1R81LOyoXESDoFr3EUaiXIA"});
+FILMES.push({id:228,t:"A Lagoa Azul",ano:"1980",cat:"classicos",link:"https://1024terabox.com/s/1bjbVyHmN5RPsDeMZeLWBIg"});
+FILMES.push({id:229,t:"Encurralado",ano:"1971",cat:"classicos",link:"https://1024terabox.com/s/1lkFt3yOJBgmG-VBqQk78aA"});
+FILMES.push({id:230,t:"Alcatraz - Fuga Impossível",ano:"1979",cat:"classicos",link:"https://1024terabox.com/s/1mOtjhHffKJY61dTOc2NbFQ"});
+FILMES.push({id:231,t:"Coração Valente",ano:"1995",cat:"classicos",link:"https://1024terabox.com/s/1VxOZbdlsGfRu6RNqQkdx5g"});
+FILMES.push({id:232,t:"3 Homens Em Conflito",ano:"1966",cat:"classicos",link:"https://1024terabox.com/s/1-VIEjUS8xv7epzh0gjzWtw"});
+FILMES.push({id:233,t:"Comando Para Matar",ano:"1986",cat:"classicos",link:"https://1024terabox.com/s/1P5ex-bxD7HfII7BKef-sSA"});
+FILMES.push({id:234,t:"Django",ano:"1966",cat:"classicos",link:"https://1024terabox.com/s/1A2FdeVsMltdquBG_8UO7UQ"});
+FILMES.push({id:235,t:"Falcão O Campeão Dos Campeões",ano:"1987",cat:"classicos",link:"https://1024terabox.com/s/1J1y2Di56jaL0q47UhtpAwA"});
+FILMES.push({id:236,t:"A História Sem Fim",ano:"1984",cat:"classicos",link:"https://1024terabox.com/s/1TT-lJmwAtyrbZ7gFP_-1BA"});
+FILMES.push({id:237,t:"Era uma Vez no Oeste",ano:"1968",cat:"classicos",link:"https://1024terabox.com/s/1RnBneUPAwDZmLZvNnjAiNw"});
+FILMES.push({id:238,t:"Os Brutos Também Amam",ano:"1953",cat:"classicos",link:"https://1024terabox.com/s/15hGkERbOIkBxTEOqPPtV-A"});
+FILMES.push({id:239,t:"O Meu Nome É Ninguém",ano:"1973",cat:"classicos",link:"https://1024terabox.com/s/1RstgjQ94dBRi9NFuhNim8A"});
+
+// PREMONIÇÃO
+FILMES.push({id:240,t:"Premonição",ano:"",cat:"terror",link:"https://1024terabox.com/s/1MGqYciRTqUD9Up-LgFqnLw"});
+FILMES.push({id:241,t:"Premonição 2",ano:"",cat:"terror",link:"https://1024terabox.com/s/1eANGra9IK8R-CgkXlB_0Ag"});
+FILMES.push({id:242,t:"Premonição 3",ano:"",cat:"terror",link:"https://1024terabox.com/s/1SM_VNaOl5vst1MwdWsN25g"});
+FILMES.push({id:243,t:"Premonição 5",ano:"2011",cat:"terror",link:"https://1024terabox.com/s/1D2jlfvg1MEoC-td-FOtNbw"});
+FILMES.push({id:244,t:"Premonição 4",ano:"",cat:"terror",link:"https://1024terabox.com/s/1Bn3Kgit04Qe5r3tAT9jZeg"});
+
+// TODO MUNDO EM PÂNICO
+FILMES.push({id:245,t:"Todo Mundo Em Pânico 5",ano:"2013",cat:"comedia",link:"https://1024terabox.com/s/1JuyZC-_mJHLtO4DO3160xw"});
+FILMES.push({id:246,t:"Todo Mundo Em Pânico 2",ano:"2001",cat:"comedia",link:"https://1024terabox.com/s/1aO6VN6dXL7uE44tCCkl8DQ"});
+FILMES.push({id:247,t:"Todo Mundo Em Pânico 4",ano:"2006",cat:"comedia",link:"https://1024terabox.com/s/1SOuN-vd0H2tmdfLcWC3aYw"});
+FILMES.push({id:248,t:"Todo Mundo Em Pânico 1",ano:"2000",cat:"comedia",link:"https://1024terabox.com/s/11WnOmf2iAnevTa-gcj2y8g"});
+FILMES.push({id:249,t:"Todo Mundo Em Pânico 3",ano:"2003",cat:"comedia",link:"https://1024terabox.com/s/1XXOxK3wvG4KzQSrjrMcWkQ"});
+
+// TERROR CLASSICO
+FILMES.push({id:250,t:"A Árvore da Maldição",ano:"1990",cat:"terrorclassico",link:"https://1024terabox.com/s/1XI1ZDC95PWcPAkF6y-jR9w"});
+FILMES.push({id:251,t:"O Predador",ano:"1987",cat:"terrorclassico",link:"https://1024terabox.com/s/16gI7Vstcon7oDZWGS1qrGQ"});
+FILMES.push({id:252,t:"O Assassino da Auto-Estrada",ano:"1988",cat:"terrorclassico",link:"https://1024terabox.com/s/19cbV6mPsCR8YNYaH8FEuvw"});
+FILMES.push({id:253,t:"A Aparição",ano:"1986",cat:"terrorclassico",link:"https://1024terabox.com/s/1fsRcrTfW5k53lFH1eYA3Tw"});
+FILMES.push({id:254,t:"A Noite dos Arrepios",ano:"1986",cat:"terrorclassico",link:"https://1024terabox.com/s/1_oWiUqoKf9AlTsRJYXLvFQ"});
+FILMES.push({id:255,t:"Armageddon",ano:"1998",cat:"terrorclassico",link:"https://1024terabox.com/s/1D83MZouroXUYd8SzwiQ51w"});
+FILMES.push({id:256,t:"Sexta-Feira 13",ano:"1980",cat:"terrorclassico",link:"https://1024terabox.com/s/15oLsDIl51i85apZ1jhXy8A"});
+FILMES.push({id:257,t:"O Navio Assassino",ano:"1980",cat:"terrorclassico",link:"https://1024terabox.com/s/17ZKogQeqK933cIPzwzwZoA"});
+FILMES.push({id:258,t:"A Profecia",ano:"1976",cat:"terrorclassico",link:"https://1024terabox.com/s/1QR5oO3DakTHLq7sEXFLrSg"});
+FILMES.push({id:259,t:"Lenda Urbana",ano:"1998",cat:"terrorclassico",link:"https://1024terabox.com/s/10-kXtUjXE1gDFchh3PE2cw"});
+FILMES.push({id:260,t:"A Cidade dos Amaldiçoados",ano:"1995",cat:"terrorclassico",link:"https://1024terabox.com/s/1TmltiPkpW2ZPU5wDExe46w"});
+FILMES.push({id:261,t:"Medo",ano:"1996",cat:"terrorclassico",link:"https://1024terabox.com/s/13mRNq523avmyugMERSZvfQ"});
+FILMES.push({id:262,t:"Desejo Macabro",ano:"1996",cat:"terrorclassico",link:"https://1024terabox.com/s/1qrRubwGKYUPvx6ypgJ73Rg"});
+FILMES.push({id:263,t:"A Ilha dos Homens Peixe",ano:"1979",cat:"terrorclassico",link:"https://1024terabox.com/s/1N_2Dl8J5meMBfjfgIIUlkw"});
+FILMES.push({id:264,t:"Uma Noite Alucinante",ano:"1981",cat:"terrorclassico",link:"https://1024terabox.com/s/11WdnOZ19QTwjnsZCaHaRig"});
+FILMES.push({id:265,t:"A Hora Do Lobisomem - Bala de Prata",ano:"",cat:"terrorclassico",link:"https://1024terabox.com/s/1NhwOqU6v994ikM3p22QYcA"});
+FILMES.push({id:266,t:"A Hora do Terror",ano:"1985",cat:"terrorclassico",link:"https://1024terabox.com/s/1A-jFXclUF0xA6FIHhFN-dg"});
+FILMES.push({id:267,t:"Fazenda Crowhaven",ano:"1970",cat:"terrorclassico",link:"https://1024terabox.com/s/1WZHhc-M0Ri9lzKpMLTZFNw"});
+FILMES.push({id:268,t:"Brinquedo Assassino",ano:"",cat:"terrorclassico",link:"https://1024terabox.com/s/1ElW999u3amuhnihEYXKEyw"});
+
+// PLANETA DOS MACACOS CLASSICO
+FILMES.push({id:269,t:"O Planeta dos Macacos",ano:"1968",cat:"terrorclassico",link:"https://1024terabox.com/s/1xXyd08SJIGXCVkLcqG9aEg"});
+FILMES.push({id:270,t:"A Fuga do Planeta dos Macacos",ano:"1971",cat:"terrorclassico",link:"https://1024terabox.com/s/12lsGv9YJz0_Hg2gnqyOeFw"});
+FILMES.push({id:271,t:"De Volta ao Planeta dos Macacos",ano:"1970",cat:"terrorclassico",link:"https://1024terabox.com/s/1XC1gfwlLdxXJj-Qk0Q9nlA"});
+FILMES.push({id:272,t:"A Batalha Pelo Planeta dos Macacos",ano:"1973",cat:"terrorclassico",link:"https://1024terabox.com/s/14ylyHw_PWQA1YTIr7Z6MYA"});
+FILMES.push({id:273,t:"Conquista do Planeta dos Macacos",ano:"1972",cat:"terrorclassico",link:"https://1024terabox.com/s/1-j-2lENZQjUW5-qLIbwWfQ"});
+
+// A HORA DO PESADELO
+FILMES.push({id:274,t:"Freddy vs Jason",ano:"2003",cat:"terrorclassico",link:"https://1024terabox.com/s/19e_Orgz5kOP1HVQ2ZBt5RA"});
+FILMES.push({id:275,t:"Hora do Pesadelo",ano:"1984",cat:"terrorclassico",link:"https://1024terabox.com/s/1O_6sk7gca2rIuyeKUWvvXg"});
+FILMES.push({id:276,t:"O Novo Pesadelo",ano:"",cat:"terrorclassico",link:"https://1024terabox.com/s/18ELi8rjWJPCK6Rrh-nXCqw"});
+FILMES.push({id:277,t:"A Hora do Pesadelo 3 - Os Guerreiros dos Sonhos",ano:"1988",cat:"terrorclassico",link:"https://1024terabox.com/s/18A4LyclgWqbs9sdZvpusuQ"});
+FILMES.push({id:278,t:"A Hora do Pesadelo 4 - O Mestre dos Sonhos",ano:"1989",cat:"terrorclassico",link:"https://1024terabox.com/s/126-fuvafdvpSQceFwjUrfw"});
+FILMES.push({id:279,t:"A Hora do Pesadelo 6 - Pesadelo Final",ano:"1992",cat:"terrorclassico",link:"https://1024terabox.com/s/17AhMl4zbJ_IShCsKl0wIUw"});
+FILMES.push({id:280,t:"A Hora do Pesadelo 5 - O Maior Horror de Freddy",ano:"1990",cat:"terrorclassico",link:"https://1024terabox.com/s/1zQT-BONDaUJZhheIU_Rcng"});
+FILMES.push({id:281,t:"Hora do Pesadelo Parte 2 - A Vingança de Freddy",ano:"1987",cat:"terrorclassico",link:"https://1024terabox.com/s/19Ct09XFR2-OeFTR7eCGFXA"});
+FILMES.push({id:282,t:"A Hora Do Pesadelo",ano:"2010",cat:"terrorclassico",link:"https://1024terabox.com/s/1XGoGtr3oIPRAQ2RefOh-xA"});
+
+// PLAY
+FILMES.push({id:283,t:"Não Estamos Sós",ano:"2016",cat:"play",link:"https://1024terabox.com/s/16qTCqLPIKlgzhiQ2Qkc17g"});
+FILMES.push({id:284,t:"Bom Menino",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1QWu14Q7Z7jiEvyQSr-tDNQ"});
+FILMES.push({id:285,t:"A Maldição do Colar",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1Jn9_kA2b4jVFiFGpJaUdfA"});
+FILMES.push({id:286,t:"Fanatismo Macabro",ano:"1965",cat:"play",link:"https://1024terabox.com/s/1MZNiBxE1sWj1orF3AoL27A"});
+FILMES.push({id:287,t:"The Seeding",ano:"2024",cat:"play",link:"https://1024terabox.com/s/1L2VWkAY9L9hoG8W2VHnK3g"});
+FILMES.push({id:288,t:"Não Solte",ano:"2024",cat:"play",link:"https://1024terabox.com/s/1TVBawI_Qq4aQRJbVPdTJFQ"});
+FILMES.push({id:289,t:"Premonição 6",ano:"",cat:"play",link:"https://1024terabox.com/s/1OgRkZkmJfb8MZJDg3h8PqQ"});
+FILMES.push({id:290,t:"Matilha Voraz",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1kWlemE4W3bihIBNlsHcZyw"});
+FILMES.push({id:291,t:"A Mulher no Jardim",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1i_2TLfBJ6Xc8L6xQA9_WEQ"});
+FILMES.push({id:292,t:"A Hora do Pesadelo",ano:"1984",cat:"play",link:"https://1024terabox.com/s/1rxRsMcfEYJv7Gm8459n-3A"});
+FILMES.push({id:293,t:"Poltergeist 2",ano:"1986",cat:"play",link:"https://1024terabox.com/s/1jwR65ZYeCJV8n75BG3BMbg"});
+FILMES.push({id:294,t:"A Fúria Do Monstro",ano:"2022",cat:"play",link:"https://1024terabox.com/s/19wX3ZqShQh6_e7Nukx8sjw"});
+FILMES.push({id:295,t:"Inferno na Estrada",ano:"1997",cat:"play",link:"https://1024terabox.com/s/1rYllNXx0bbCa3lp9IX8K6w"});
+FILMES.push({id:296,t:"O Outro Lado dos Trilhos",ano:"2008",cat:"play",link:"https://1024terabox.com/s/11iZ09ShOYDGPWY5PtuhTTw"});
+FILMES.push({id:297,t:"A Ilha dos Homens Peixes",ano:"1979",cat:"play",link:"https://1024terabox.com/s/1nvdSM-ilrWBxPE6fRD1pLA"});
+FILMES.push({id:298,t:"O Dia do Terror",ano:"2001",cat:"play",link:"https://1024terabox.com/s/1K-k_FPh9AzKy0e7bgWgwvQ"});
+FILMES.push({id:299,t:"Não Apaguem As Luzes",ano:"2023",cat:"play",link:"https://1024terabox.com/s/18qa2KTZrIZd6neKzJA3RIg"});
+FILMES.push({id:300,t:"Invocação Do Mal 4 - O Último Ritual",ano:"2025",cat:"play",link:"https://1024terabox.com/s/102PG8x1JCAii2eTHaOstrw"});
+FILMES.push({id:301,t:"O Mal que Nos Habita",ano:"2023",cat:"play",link:"https://1024terabox.com/s/1qBG0rfqJihT7UUKBrRiIJg"});
+FILMES.push({id:302,t:"O Mal que Nos Habita 2023",ano:"2023",cat:"play",link:"https://1024terabox.com/s/1N9lt6P_-_Ss1GWIakoS1sA"});
+FILMES.push({id:303,t:"Massacre 1976",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1GxlaYKAswOrWox6yVTNqrg"});
+FILMES.push({id:304,t:"Anaconda",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1n8VPeGgbcAIp3CzzpA3Uog"});
+FILMES.push({id:305,t:"Halloween 9 - O Início",ano:"2007",cat:"play",link:"https://1024terabox.com/s/1NeLnnRlaVeFKa0oq-ZzMsA"});
+FILMES.push({id:306,t:"Evocando Espíritos 2",ano:"2013",cat:"play",link:"https://1024terabox.com/s/1RwsBws4ryxajrNimNM1Wzw"});
+FILMES.push({id:307,t:"O Campo Da Morte",ano:"2022",cat:"play",link:"https://1024terabox.com/s/1OOgLwb79vBWGIcKFZe8TKg"});
+FILMES.push({id:308,t:"O Padastro",ano:"1987",cat:"play",link:"https://1024terabox.com/s/1SB8QpJs5aAdNfz1RsGj5UQ"});
+FILMES.push({id:309,t:"Poltergeist 1",ano:"1982",cat:"play",link:"https://1024terabox.com/s/1gyWHF-Wy9ufOOOgbdTQVJw"});
+FILMES.push({id:310,t:"Os Mensageiros",ano:"2007",cat:"play",link:"https://1024terabox.com/s/1Ey9S7mRsCdZ2jgARalHQKA"});
+FILMES.push({id:311,t:"Cães Assassinos",ano:"2006",cat:"play",link:"https://1024terabox.com/s/14_1f2YWPWGdUXQd1cnrB1A"});
+FILMES.push({id:312,t:"Assimilados",ano:"2019",cat:"play",link:"https://1024terabox.com/s/1UTDhUV_vB8WEOR15bRrRZA"});
+FILMES.push({id:313,t:"Um Passado Sombrio",ano:"2014",cat:"play",link:"https://1024terabox.com/s/1Ske-i8sHv9CIiC3Xyxvqig"});
+FILMES.push({id:314,t:"Estrada Florestal 825",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1cx1tbPE7EMmwAY0Cq5pERA"});
+FILMES.push({id:315,t:"Presente Maldito",ano:"2025",cat:"play",link:"https://1024terabox.com/s/1aYPsWoyNDUKEMzanxSTuCQ"});
+FILMES.push({id:316,t:"Maldição Eterna",ano:"2023",cat:"play",link:"https://1024terabox.com/s/18MSJ4c8HR80sr1QxUCjMZg"});
+FILMES.push({id:317,t:"Era uma Vez no Oeste",ano:"1968",cat:"play",link:"https://1024terabox.com/s/1F5JnEHsGtk-OXDMudWt-rQ"});
+FILMES.push({id:318,t:"A Maldição Da Primeira Colheita",ano:"2024",cat:"play",link:"https://1024terabox.com/s/1e-Da9Bp7mkVHQXbexTnhgA"});
+FILMES.push({id:319,t:"A Vingança do Espantalho",ano:"1981",cat:"play",link:"https://1024terabox.com/s/1RawOQ0HJ6Q8NDFRAS5abVA"});
+FILMES.push({id:320,t:"Um Homem",ano:"1967",cat:"play",link:"https://1024terabox.com/s/1eSdLeaODE8rn8I29eSsg_w"});
+FILMES.push({id:321,t:"Eu Vi o Que Você Fez e Eu Sei Quem Você é",ano:"1988",cat:"play",link:"https://1024terabox.com/s/14cTQZdn8GemlLNUGWE1NLw"});
+FILMES.push({id:322,t:"O Navio Assassino",ano:"1980",cat:"play",link:"https://1024terabox.com/s/1woJExWeRk59HvmQQLl3HwQ"});
+FILMES.push({id:323,t:"7 Almas",ano:"2012",cat:"play",link:"https://1024terabox.com/s/1F5pBQM9T1mjrkOs1SMPnFw"});
+FILMES.push({id:324,t:"Entre Mundos",ano:"2018",cat:"play",link:"https://1024terabox.com/s/1hZPKOVLAmpyomNM1S_CeYg"});
+FILMES.push({id:325,t:"A Profecia",ano:"2016",cat:"play",link:"https://1024terabox.com/s/1LsgXevz-E5QFs0eiDxmHww"});
+FILMES.push({id:326,t:"A Última Premonição",ano:"2015",cat:"play",link:"https://1024terabox.com/s/10w2j7Ii68XbsZ37hDjOKiA"});
+FILMES.push({id:327,t:"Mazzaropi O Lamparina",ano:"1964",cat:"play",link:"https://1024terabox.com/s/1CydgUPyPop9VMJcL9-WLEA"});
+FILMES.push({id:328,t:"Meia Noite e Um",ano:"1993",cat:"play",link:"https://1024terabox.com/s/1fDrPKkGbqgQOA7-PEkJ1lQ"});
+
+// ============ PALETAS ============
+var PAL=[
+  ['#1a0533','#6b21a8'],['#0f172a','#1d4ed8'],['#0c1a0c','#15803d'],
+  ['#1a0a00','#c2410c'],['#1a0a1a','#be185d'],['#0a1a1a','#0891b2'],
+  ['#1a1500','#ca8a04'],['#0d0d0d','#525252'],['#1a0518','#9333ea'],
+  ['#001a10','#059669'],['#1a0000','#dc2626'],['#000e1a','#0284c7']
+];
+var SHAPES=['🎬','🎞️','📽️','🍿','🎥','📀','🔪','👻','🤖','🚀'];
+
+function mCoverBg(id){
+  var p=PAL[id%PAL.length];
+  var a=(id*37)%360;
+  return 'linear-gradient('+a+'deg,'+p[0]+' 0%,'+p[1]+' 100%)';
+}
+
+function mCoverHTML(id,title,small){
+  var bg=mCoverBg(id);
+  var shape=SHAPES[id%SHAPES.length];
+  var short=title.length>22?title.substring(0,20)+'...':title;
+  var sz=small?'0.7rem':'0.78rem';
+  return '<div class="movie-cover-gen" style="background:'+bg+';display:flex;align-items:center;justify-content:center;">'
+    +'<div style="font-size:3rem;opacity:0.2;">'+shape+'</div>'
+    +'<div class="movie-cover-text" style="font-size:'+sz+';position:absolute;bottom:0.5rem;left:0;right:0;">'+short+'</div>'
+    +'</div>';
+}
+
+// ============ STATE ============
+var mCurrentCat=null;
+
+document.getElementById('movie-total-filmes').textContent=FILMES.length;
+document.getElementById('movie-total-cats').textContent=CATS.length;
+
+// Build cats bar
+var catsBar=document.getElementById('movie-cats-bar');
+var allPill=document.createElement('div');
+allPill.className='movie-cat-pill active';
+allPill.id='mpill-all';
+allPill.innerHTML='🎬 Todos <span class="movie-cat-count">'+FILMES.length+'</span>';
+allPill.onclick=function(){mShowHome();};
+catsBar.appendChild(allPill);
+
+CATS.forEach(function(cat){
+  var cnt=FILMES.filter(function(f){return f.cat===cat.id;}).length;
+  var pill=document.createElement('div');
+  pill.className='movie-cat-pill';
+  pill.id='mpill-'+cat.id;
+  pill.innerHTML=cat.icon+' '+cat.nome+' <span class="movie-cat-count">'+cnt+'</span>';
+  pill.onclick=function(){mSelectCat(cat.id);};
+  catsBar.appendChild(pill);
+});
+
+// ============ HOME ============
+function mShowHome(){
+  mCurrentCat=null;
+  document.getElementById('movie-search').value='';
+  document.querySelectorAll('.movie-cat-pill').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('mpill-all').classList.add('active');
+  document.getElementById('movie-breadcrumb').innerHTML='<span>Início</span>';
+
+  var topFilmes=[].concat(FILMES).sort(function(){return Math.random()-0.5;}).slice(0,6);
+  var content=document.getElementById('movie-content');
+
+  var heroHTML='<div style="background:linear-gradient(135deg,#0f0f1e,#1a0a2e 40%,#0a1a1a);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:2rem;margin-bottom:1.5rem;position:relative;overflow:hidden;">'
+    +'<div style="position:absolute;right:-0.5rem;top:-1rem;font-size:10rem;color:rgba(255,255,255,0.02);font-weight:900;pointer-events:none;line-height:1;">CINE</div>'
+    +'<div style="display:inline-block;background:rgba(255,60,110,0.1);border:1px solid rgba(255,60,110,0.25);color:#ff3c6e;padding:0.25rem 0.7rem;border-radius:20px;font-size:0.68rem;font-family:monospace;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.8rem;">⬇ Download Direto · Terabox</div>'
+    +'<h2 style="font-family:Georgia,serif;font-size:2rem;font-weight:700;margin-bottom:0.5rem;">Acervo <span style="color:#ffb83c;">Cinematográfico</span></h2>'
+    +'<p style="color:#6b6b8a;font-size:0.9rem;line-height:1.5;">'+FILMES.length+' filmes · '+CATS.length+' categorias · Dublado · Legendado</p>'
+    +'</div>';
+
+  var topHTML='<div class="movie-section-header"><span class="movie-section-title">🎬 Destaques</span><span class="movie-section-badge">'+topFilmes.length+' filmes</span><div class="movie-section-line"></div></div>';
+  topHTML+='<div class="movie-top-list" id="mtop-list"></div>';
+
+  var catHTML='<div class="movie-section-header"><span class="movie-section-title">📂 Categorias</span><span class="movie-section-badge">'+CATS.length+'</span><div class="movie-section-line"></div></div>';
+  catHTML+='<div class="movie-cat-grid-home" id="mcat-home-grid"></div>';
+
+  content.innerHTML=heroHTML+topHTML+catHTML;
+
+  var topList=document.getElementById('mtop-list');
+  topFilmes.forEach(function(f,idx){
+    var cat=CATS.find(function(c){return c.id===f.cat;});
+    var div=document.createElement('div');
+    div.className='movie-top-item';
+    div.innerHTML='<div class="movie-top-rank">0'+(idx+1)+'</div>'
+      +'<div class="movie-top-mini-cover">'+mCoverHTML(f.id,f.t,true)+'</div>'
+      +'<div class="movie-top-info"><div class="movie-top-title">'+f.t+'</div><div class="movie-top-year">'+(f.ano?f.ano:'')+' · '+(cat?cat.icon+' '+cat.nome:'')+'</div></div>'
+      +'<a class="movie-top-dl" href="'+f.link+'" target="_blank" rel="noopener noreferrer" onclick="mShowToast(\'⬇ Baixando...\',\'green\')">⬇ Baixar</a>';
+    topList.appendChild(div);
+  });
+
+  var catGrid=document.getElementById('mcat-home-grid');
+  CATS.forEach(function(cat){
+    var cnt=FILMES.filter(function(f){return f.cat===cat.id;}).length;
+    var div=document.createElement('div');
+    div.className='movie-cat-card-home';
+    div.innerHTML='<div class="movie-cat-emoji">'+cat.icon+'</div><div class="movie-cat-name">'+cat.nome+'</div><div class="movie-cat-cnt">'+cnt+' filmes</div>';
+    div.onclick=function(){mSelectCat(cat.id);};
+    catGrid.appendChild(div);
+  });
+}
+
+// ============ SELECT CAT ============
+function mSelectCat(catId){
+  mCurrentCat=catId;
+  document.getElementById('movie-search').value='';
+  document.querySelectorAll('.movie-cat-pill').forEach(function(p){p.classList.remove('active');});
+  var pill=document.getElementById('mpill-'+catId);
+  if(pill) pill.classList.add('active');
+
+  var cat=CATS.find(function(c){return c.id===catId;});
+  var lista=FILMES.filter(function(f){return f.cat===catId;});
+
+  document.getElementById('movie-breadcrumb').innerHTML=
+    '<span class="vbc-home" onclick="mShowHome()">Início</span>'
+    +' <span style="color:rgba(255,255,255,0.15)">›</span> '
+    +'<span class="vbc-current">'+(cat?cat.icon+' '+cat.nome:catId)+'</span>';
+
+  var html='<div style="margin-bottom:1.5rem;">'
+    +'<div style="font-size:2.5rem;margin-bottom:0.4rem;">'+(cat?cat.icon:'📁')+'</div>'
+    +'<h2 style="font-family:Georgia,serif;font-size:2rem;font-weight:700;margin-bottom:0.2rem;">'+(cat?cat.nome:catId)+'</h2>'
+    +'<p style="color:#6b6b8a;font-size:0.85rem;">'+lista.length+' filmes disponíveis</p>'
+    +'</div>'
+    +'<div class="movie-grid" id="movie-main-grid"></div>';
+
+  document.getElementById('movie-content').innerHTML=html;
+  var grid=document.getElementById('movie-main-grid');
+  lista.forEach(function(f){grid.appendChild(mCreateCard(f));});
+}
+
+// ============ SEARCH ============
+document.getElementById('movie-search').addEventListener('input',function(){
+  var term=this.value.trim().toLowerCase();
+  if(term.length<2){
+    if(mCurrentCat) mSelectCat(mCurrentCat);
+    else mShowHome();
+    return;
+  }
+  var res=FILMES.filter(function(f){
+    return f.t.toLowerCase().indexOf(term)>-1||(f.ano && f.ano.toLowerCase().indexOf(term)>-1);
+  });
+  document.getElementById('movie-breadcrumb').innerHTML=
+    '<span class="vbc-home" onclick="mShowHome()">Início</span>'
+    +' <span style="color:rgba(255,255,255,0.15)">›</span> '
+    +'<span class="vbc-current">🔍 "'+this.value+'"</span>';
+
+  var html='<div style="margin-bottom:1.5rem;">'
+    +'<h2 style="font-family:Georgia,serif;font-size:2rem;font-weight:700;margin-bottom:0.2rem;">🔍 Resultados</h2>'
+    +'<p style="color:#6b6b8a;font-size:0.85rem;">'+res.length+' filmes encontrados</p>'
+    +'</div>'
+    +'<div class="movie-grid" id="movie-main-grid"></div>';
+
+  document.getElementById('movie-content').innerHTML=html;
+  var grid=document.getElementById('movie-main-grid');
+  if(res.length===0){
+    grid.innerHTML='<div class="movie-empty"><div class="movie-empty-icon">🎬</div><p>Nenhum resultado.</p></div>';
+  } else {
+    res.forEach(function(f){grid.appendChild(mCreateCard(f));});
+  }
+});
+
+// ============ CREATE CARD ============
+function mCreateCard(filme){
+  var div=document.createElement('div');
+  div.className='movie-card';
+  div.innerHTML='<div class="movie-card-cover">'
+    +mCoverHTML(filme.id,filme.t,false)
+    +'<div class="movie-card-overlay">'
+    +'<a class="movie-dl-btn-small" href="'+filme.link+'" target="_blank" rel="noopener noreferrer" onclick="mShowToast(\'⬇ Baixando...\',\'green\')">⬇ BAIXAR</a>'
+    +'</div>'
+    +'</div>'
+    +'<div class="movie-card-info">'
+    +'<div class="movie-card-title" title="'+filme.t+'" onclick="mOpenModal('+filme.id+')" style="cursor:pointer;">'+filme.t+'</div>'
+    +'<div class="movie-card-year">'+(filme.ano?filme.ano:'')+'</div>'
+    +'<div class="movie-card-foot"><span class="movie-badge-quality">HD</span><a class="movie-card-dl-direct" href="'+filme.link+'" target="_blank" rel="noopener noreferrer" onclick="mShowToast(\'⬇ Baixando...\',\'green\')">⬇ Baixar</a></div>'
+    +'</div>';
+  return div;
+}
+
+// ============ MODAL ============
+function mOpenModal(id){
+  var filme=FILMES.find(function(f){return f.id===id;});
+  if(!filme) return;
+  var cat=CATS.find(function(c){return c.id===filme.cat;});
+  document.getElementById('movie-modal-cat').textContent=cat?cat.icon+' '+cat.nome:'';
+  document.getElementById('movie-modal-title').textContent=filme.t;
+  document.getElementById('movie-modal-year').textContent=filme.ano?filme.ano:'';
+
+  var bg=mCoverBg(filme.id);
+  var shape=SHAPES[filme.id%SHAPES.length];
+  document.getElementById('movie-modal-art').innerHTML=
+    '<button class="movie-modal-close" onclick="mCloseModal()">✕</button>'
+    +'<div style="width:100%;height:100%;background:'+bg+';display:flex;align-items:center;justify-content:center;font-size:5rem;opacity:0.15;">'+shape+'</div>'
+    +'<div style="position:absolute;inset:0;background:linear-gradient(to top,#0f0f1a,transparent 55%);"></div>'
+    +'<div style="position:absolute;bottom:0;left:0;right:0;padding:1rem;">'
+    +'<div style="font-family:Georgia,serif;font-size:1.1rem;font-weight:700;color:white;text-shadow:0 2px 8px rgba(0,0,0,0.8);">'+filme.t.substring(0,40)+'</div>'
+    +'</div>';
+
+  var dlBtn=document.getElementById('movie-btn-dl');
+  dlBtn.href=filme.link;
+  dlBtn.onclick=function(){
+    mShowToast('⬇ Download iniciado!','green');
+    setTimeout(function(){mCloseModal();},400);
+    return true;
+  };
+  document.getElementById('movie-btn-copy').onclick=function(){
+    if(navigator.clipboard){
+      navigator.clipboard.writeText(filme.link).then(function(){mShowToast('🔗 Link copiado!','yellow');});
+    } else {
+      var el=document.createElement('textarea');
+      el.value=filme.link;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      mShowToast('🔗 Link copiado!','yellow');
+    }
+  };
+  document.getElementById('movie-modal-overlay').classList.add('open');
+}
+
+function mCloseModal(){document.getElementById('movie-modal-overlay').classList.remove('open');}
+function mHandleModalClick(e){if(e.target===document.getElementById('movie-modal-overlay')) mCloseModal();}
+document.addEventListener('keydown',function(e){if(e.key==='Escape') mCloseModal();});
+
+// ============ TOAST ============
+function mShowToast(msg,type){
+  var stack=document.getElementById('movie-toasts');
+  var t=document.createElement('div');
+  t.className='movie-toast'+(type==='pink'?' pink':type==='green'?' green':'');
+  t.textContent=msg;
+  stack.appendChild(t);
+  setTimeout(function(){t.remove();},3500);
+}
+
+// ============ FAKE ACTIVITY ============
+var MNOMES=['Carlos (SP)','Ana (RJ)','Marcos (MG)','João (PR)','Fernanda (RS)','Lucas (BA)','Pedro (CE)','Juliana (GO)','Rafael (SC)','Beatriz (PE)'];
+setInterval(function(){
+  var nome=MNOMES[Math.floor(Math.random()*MNOMES.length)];
+  var filme=FILMES[Math.floor(Math.random()*FILMES.length)];
+  var short=filme.t.length>28?filme.t.substring(0,26)+'...':filme.t;
+  mShowToast('🎥 '+nome+' baixou "'+short+'"','pink');
+},15000);
+
+// ============ ONLINE COUNTER ============
+setInterval(function(){
+  document.getElementById('movie-online-count').textContent=Math.floor(Math.random()*80+30);
+},5000);
+
+// ============ START ============
+mShowHome();
+})();
+</script>
