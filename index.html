@@ -19,7 +19,7 @@
 :root{
   --bg:#0a0a0a;
   --bg2:#111;
-  --card:#1a1a1a;
+  --card:rgba(26,26,26,0.35);
   --text:#fff;
   --text2:#aaa;
   --border:#2a2a2a;
@@ -31,7 +31,7 @@
 body.light{
   --bg:#f0f0f0;
   --bg2:#fff;
-  --card:#fff;
+  --card:rgba(255,255,255,0.55);
   --text:#111;
   --text2:#555;
   --border:#ddd;
@@ -45,6 +45,16 @@ body{
   transition:all 0.4s;
   overflow-x:hidden;
   min-height:100vh;
+}
+
+#bg-canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
+  pointer-events:none;
 }
 
 ::-webkit-scrollbar{width:8px;}
@@ -66,34 +76,34 @@ body{
 .theme-toggle{position:fixed;top:15px;right:15px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:8px 18px;cursor:pointer;z-index:10000;display:flex;gap:8px;font-size:13px;font-weight:600;color:var(--text);transition:0.3s;backdrop-filter:blur(10px);}
 .theme-toggle:hover{border-color:var(--neon);box-shadow:var(--shadow);}
 
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative;background:var(--bg);overflow:hidden;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative;background:transparent;overflow:hidden;}
 .hero::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center, rgba(0,255,65,0.05) 0%, transparent 70%);z-index:0;pointer-events:none;}
 .hero *{position:relative;z-index:1;}
 .hero-logo{font-size:clamp(3rem,10vw,6rem);font-weight:900;background:linear-gradient(135deg,var(--neon),#00cc33,#39ff14);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;letter-spacing:-2px;}
 .hero-sub{font-size:clamp(1rem,2vw,1.5rem);color:var(--text2);margin-bottom:40px;letter-spacing:4px;text-transform:uppercase;}
 .hero-search{width:100%;max-width:600px;margin-bottom:50px;position:relative;}
-.hero-search input{width:100%;padding:16px 50px 16px 25px;border-radius:50px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:16px;outline:none;transition:0.3s;}
+.hero-search input{width:100%;padding:16px 50px 16px 25px;border-radius:50px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:16px;outline:none;transition:0.3s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 .hero-search input:focus{border-color:var(--neon);box-shadow:var(--shadow);}
 .hero-search .search-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--text2);pointer-events:none;}
 .hero-buttons{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;}
-.hero-btn{padding:18px 50px;border-radius:50px;font-size:clamp(1rem,1.5vw,1.2rem);font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px;position:relative;overflow:hidden;background:transparent;border:2px solid var(--neon);color:var(--neon);}
+.hero-btn{padding:18px 50px;border-radius:50px;font-size:clamp(1rem,1.5vw,1.2rem);font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px;position:relative;overflow:hidden;background:transparent;border:2px solid var(--neon);color:var(--neon);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
 .hero-btn:hover{background:linear-gradient(135deg,var(--neon),#00cc33);color:#000;transform:scale(1.05);box-shadow:0 0 50px rgba(0,255,65,0.6);}
 .hero-stats{display:flex;gap:40px;margin-top:20px;flex-wrap:wrap;justify-content:center;}
 .hero-stats span{font-size:14px;color:var(--text2);}
 .hero-stats strong{font-size:22px;color:var(--neon);display:block;text-align:center;}
 
-.page{display:none;padding:80px 20px 40px;max-width:1400px;margin:0 auto;animation:fadeIn 0.5s ease;}
+.page{display:none;padding:80px 20px 40px;max-width:1400px;margin:0 auto;animation:fadeIn 0.5s ease;background:transparent;}
 .page.active{display:block;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 
 .page-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:30px;}
 .page-header h1{font-size:clamp(1.8rem,4vw,2.8rem);}
 .page-header h1 span{color:var(--neon);}
-.page-header .back-btn{padding:10px 25px;border:1px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);cursor:pointer;transition:0.3s;font-weight:600;}
+.page-header .back-btn{padding:10px 25px;border:1px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);cursor:pointer;transition:0.3s;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 .page-header .back-btn:hover{border-color:var(--neon);box-shadow:var(--shadow);}
 
 .page-search{width:100%;max-width:500px;margin-bottom:30px;}
-.page-search input{width:100%;padding:12px 20px;border-radius:50px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:15px;outline:none;transition:0.3s;}
+.page-search input{width:100%;padding:12px 20px;border-radius:50px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:15px;outline:none;transition:0.3s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 .page-search input:focus{border-color:var(--neon);box-shadow:var(--shadow);}
 
 /* ===== GRID E CARDS NO ESTILO PLAYLIST MUSICAL ===== */
@@ -109,6 +119,8 @@ body{
   position:relative;
   z-index:1;
   padding:0;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
 
 .movie-card:hover{transform:translateY(-8px);}
@@ -191,7 +203,7 @@ body{
 }
 
 .pagination{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:40px 0;}
-.pagination button{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;transition:0.3s;font-weight:600;}
+.pagination button{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;transition:0.3s;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 .pagination button:hover,
 .pagination button.active{background:var(--neon);color:#000;border-color:var(--neon);}
 .pagination button:disabled{opacity:0.3;cursor:not-allowed;}
@@ -219,6 +231,7 @@ body{
 </head>
 <body>
 
+<canvas id="bg-canvas"></canvas>
 <div class="cursor-trail" id="cursorTrail"></div>
 <div class="meteor-container" id="meteorContainer"></div>
 <div class="video-rain" id="videoRain"></div>
@@ -1938,6 +1951,86 @@ document.addEventListener('mousemove', (e) => {
 
   setTimeout(() => dot.remove(), 650);
 }, { passive: true });
+
+// ============================================================
+// FUNDO EFEITO (PONTOS E LINHAS)
+// ============================================================
+const bgCanvas = document.getElementById('bg-canvas');
+const bgCtx = bgCanvas.getContext('2d');
+
+let BW, BH;
+function resizeBg() {
+  BW = bgCanvas.width = window.innerWidth;
+  BH = bgCanvas.height = window.innerHeight;
+}
+resizeBg();
+window.addEventListener('resize', resizeBg);
+
+const BG_COLORS = ['#00ff88', '#00ccff', '#ff00aa', '#ffcc00', '#8800ff'];
+const NUM_POINTS = 90;
+const MAX_DIST = 160;
+
+const bgPoints = [];
+for (let i = 0; i < NUM_POINTS; i++) {
+  bgPoints.push({
+    x: Math.random() * BW,
+    y: Math.random() * BH,
+    z: Math.random() * 1 + 0.3,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+    r: Math.random() * 2 + 1,
+    color: BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)]
+  });
+}
+
+function animateBg() {
+  let bgFill;
+  if (document.body.classList.contains('light')) {
+    bgFill = 'rgba(240,240,240,0.25)';
+  } else {
+    bgFill = 'rgba(10,10,10,0.25)';
+  }
+  bgCtx.fillStyle = bgFill;
+  bgCtx.fillRect(0, 0, BW, BH);
+
+  for (let i = 0; i < bgPoints.length; i++) {
+    const p = bgPoints[i];
+    p.x += p.vx * p.z;
+    p.y += p.vy * p.z;
+
+    if (p.x < 0 || p.x > BW) p.vx *= -1;
+    if (p.y < 0 || p.y > BH) p.vy *= -1;
+
+    for (let j = i + 1; j < bgPoints.length; j++) {
+      const q = bgPoints[j];
+      const dx = p.x - q.x;
+      const dy = p.y - q.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MAX_DIST) {
+        const alpha = (1 - dist / MAX_DIST) * 0.35 * Math.min(p.z, q.z);
+        bgCtx.strokeStyle = p.color;
+        bgCtx.globalAlpha = alpha;
+        bgCtx.lineWidth = 0.8;
+        bgCtx.beginPath();
+        bgCtx.moveTo(p.x, p.y);
+        bgCtx.lineTo(q.x, q.y);
+        bgCtx.stroke();
+      }
+    }
+    bgCtx.globalAlpha = 1;
+
+    bgCtx.fillStyle = p.color;
+    bgCtx.shadowBlur = 12;
+    bgCtx.shadowColor = p.color;
+    bgCtx.beginPath();
+    bgCtx.arc(p.x, p.y, p.r * p.z, 0, Math.PI * 2);
+    bgCtx.fill();
+    bgCtx.shadowBlur = 0;
+  }
+
+  requestAnimationFrame(animateBg);
+}
+animateBg();
 
 // ============================================================
 // INICIALIZAÇÃO
