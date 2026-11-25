@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-<meta name="theme-color" content="#00ff41">
+<meta name="theme-color" content="#08090a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="description" content="CINE TERABOX — acervo completo de filmes no Terabox e no Google Drive. Busque, escolha e assista.">
 <title>CINE TERABOX - Acervo Completo</title>
 
 <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
@@ -12,280 +16,946 @@
 <link rel="icon" href="favicon.ico">
 <meta name="application-name" content="CINE TERABOX">
 <meta name="apple-mobile-web-app-title" content="CINE TERABOX">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+/* ============================================================
+   TOKENS
+   ============================================================ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
 
 :root{
-  --bg:#0a0a0a;
-  --bg2:#111;
-  --card:rgba(26,26,26,0.35);
-  --text:#fff;
-  --text2:#aaa;
-  --border:#2a2a2a;
+  --bg:#08090a;
+  --bg-soft:#0d0f11;
+  --surface:rgba(255,255,255,0.032);
+  --surface-2:rgba(255,255,255,0.06);
+  --text:#f2f5f3;
+  --text-2:#9aa5a0;
+  --text-3:#6b7570;
+  --border:rgba(255,255,255,0.09);
+  --border-strong:rgba(255,255,255,0.16);
   --neon:#00ff41;
-  --neon2:#39ff14;
-  --shadow:0 0 20px rgba(0,255,65,0.3);
+  --neon-soft:rgba(0,255,65,0.12);
+  --neon-line:rgba(0,255,65,0.35);
+  --shadow:0 0 24px rgba(0,255,65,0.22);
+  --shadow-lg:0 18px 50px rgba(0,0,0,0.55);
+  --radius:16px;
+  --radius-sm:10px;
+  --max:1440px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --header-bg:rgba(8,9,10,0.72);
 }
 
 body.light{
-  --bg:#f0f0f0;
-  --bg2:#fff;
-  --card:rgba(255,255,255,0.55);
-  --text:#111;
-  --text2:#555;
-  --border:#ddd;
-  --shadow:0 0 20px rgba(0,255,65,0.2);
+  --bg:#ffffff;
+  --bg-soft:#ffffff;
+  --surface:#f7f9f8;
+  --surface-2:#eef2f0;
+  --text:#0b1512;
+  --text-2:#3d4a45;
+  --text-3:#68756f;
+  --border:rgba(0,0,0,0.11);
+  --border-strong:rgba(0,0,0,0.22);
+  --neon:#00b332;
+  --neon-soft:rgba(0,179,50,0.10);
+  --neon-line:rgba(0,179,50,0.35);
+  --shadow:0 0 24px rgba(0,179,50,0.16);
+  --shadow-lg:0 18px 44px rgba(0,0,0,0.12);
+  --header-bg:rgba(255,255,255,0.78);
 }
 
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+
 body{
-  font-family:'Montserrat','Segoe UI',sans-serif;
+  font-family:'Inter','Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  font-size:15px;
+  font-weight:400;
+  line-height:1.5;
+  letter-spacing:-0.003em;
   background:var(--bg);
   color:var(--text);
-  transition:all 0.4s;
-  overflow-x:hidden;
   min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+  font-synthesis:none;
+  font-kerning:normal;
+  transition:background .4s var(--ease), color .4s var(--ease);
+}
+
+/* no tema claro o texto escuro sobre claro fica mais nitido com subpixel */
+body.light{
+  -webkit-font-smoothing:auto;
+  -moz-osx-font-smoothing:auto;
+}
+
+/* garante branco: precisa vencer o body{background:var(--bg)} declarado depois */
+html.theme-light,
+html.theme-light body,
+body.light{
+  background:#ffffff !important;
 }
 
 #bg-canvas{
-  position:absolute;
-  top:0;
-  left:0;
+  position:fixed;
+  inset:0;
   width:100%;
   height:100%;
   z-index:-1;
   pointer-events:none;
+  display:block;
+  contain:strict;
 }
 
-::-webkit-scrollbar{width:8px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--neon);border-radius:10px;}
+/* profundidade: halo de projetor + vinheta */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:
+    radial-gradient(70% 55% at 50% -10%, rgba(0,255,65,0.09), transparent 70%),
+    radial-gradient(45% 40% at 12% 100%, rgba(0,255,65,0.045), transparent 70%),
+    radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.5) 100%);
+  transition:opacity .5s;
+}
+body.light::before{
+  background:
+    radial-gradient(70% 55% at 50% -10%, rgba(0,180,90,0.07), transparent 70%),
+    radial-gradient(45% 40% at 12% 100%, rgba(0,180,90,0.04), transparent 70%);
+}
 
-.meteor-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;overflow:hidden;}
-.meteor{position:absolute;width:2px;height:80px;background:linear-gradient(to bottom,#ffdd00,transparent);opacity:0;animation:meteorFall var(--duration,1.2s) ease-out forwards;pointer-events:none;}
-@keyframes meteorFall{0%{transform:translateX(0) translateY(0) rotate(45deg);opacity:1;}100%{transform:translateX(300px) translateY(300px) rotate(45deg);opacity:0;}}
+/* no tema claro o canvas escuro sai de cena: fundo limpo e branco */
+body.light #bg-canvas{
+  opacity:0;
+  transition:opacity .35s;
+}
 
-.video-rain{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9997;overflow:hidden;}
-.video-frame{position:absolute;width:60px;height:35px;background:rgba(0,0,0,0.45);border:1px solid var(--neon);border-radius:4px;opacity:0;animation:rainFall 4s linear forwards;display:flex;align-items:center;justify-content:center;font-size:16px;color:white;font-family:monospace;pointer-events:none;}
-@keyframes rainFall{0%{transform:translateY(-100px) rotate(0deg);opacity:0.7;}100%{transform:translateY(110vh) rotate(360deg);opacity:0;}}
+img{display:block;max-width:100%;}
+button{font:inherit;color:inherit;}
+a{color:inherit;text-decoration:none;}
 
-.cursor-trail{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden;}
-.trail-dot{position:absolute;width:8px;height:8px;background:radial-gradient(circle, rgba(0,255,65,0.85) 0%, rgba(0,255,65,0) 70%);border-radius:50%;box-shadow:0 0 12px rgba(0,255,65,0.5);pointer-events:none;animation:trailFade 0.6s linear forwards;}
-@keyframes trailFade{0%{transform:scale(1);opacity:1;}100%{transform:scale(0);opacity:0;}}
+:focus-visible{
+  outline:2px solid var(--neon);
+  outline-offset:3px;
+  border-radius:6px;
+}
 
-.theme-toggle{position:fixed;top:15px;right:15px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:8px 18px;cursor:pointer;z-index:10000;display:flex;gap:8px;font-size:13px;font-weight:600;color:var(--text);transition:0.3s;backdrop-filter:blur(10px);}
-.theme-toggle:hover{border-color:var(--neon);box-shadow:var(--shadow);}
+::selection{background:var(--neon);color:#000;}
 
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;position:relative;background:transparent;overflow:hidden;}
-.hero::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center, rgba(0,255,65,0.05) 0%, transparent 70%);z-index:0;pointer-events:none;}
-.hero *{position:relative;z-index:1;}
-.hero-logo{font-size:clamp(3rem,10vw,6rem);font-weight:900;background:linear-gradient(135deg,var(--neon),#00cc33,#39ff14);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:10px;letter-spacing:-2px;}
-.hero-sub{font-size:clamp(1rem,2vw,1.5rem);color:var(--text2);margin-bottom:40px;letter-spacing:4px;text-transform:uppercase;}
-.hero-search{width:100%;max-width:600px;margin-bottom:50px;position:relative;}
-.hero-search input{width:100%;padding:16px 50px 16px 25px;border-radius:50px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:16px;outline:none;transition:0.3s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-.hero-search input:focus{border-color:var(--neon);box-shadow:var(--shadow);}
-.hero-search .search-icon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--text2);pointer-events:none;}
-.hero-buttons{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;}
-.hero-btn{padding:18px 50px;border-radius:50px;font-size:clamp(1rem,1.5vw,1.2rem);font-weight:700;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:2px;position:relative;overflow:hidden;background:transparent;border:2px solid var(--neon);color:var(--neon);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
-.hero-btn:hover{background:linear-gradient(135deg,var(--neon),#00cc33);color:#000;transform:scale(1.05);box-shadow:0 0 50px rgba(0,255,65,0.6);}
-.hero-stats{display:flex;gap:40px;margin-top:20px;flex-wrap:wrap;justify-content:center;}
-.hero-stats span{font-size:14px;color:var(--text2);}
-.hero-stats strong{font-size:22px;color:var(--neon);display:block;text-align:center;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--neon-line);border-radius:10px;border:2px solid transparent;background-clip:padding-box;}
+::-webkit-scrollbar-thumb:hover{background:var(--neon);background-clip:padding-box;}
 
-.page{display:none;padding:80px 20px 40px;max-width:1400px;margin:0 auto;animation:fadeIn 0.5s ease;background:transparent;}
+.skip-link{
+  position:absolute;left:-9999px;top:0;z-index:1000;
+  background:var(--neon);color:#000;padding:12px 20px;border-radius:0 0 10px 0;
+  font-weight:600;
+}
+.skip-link:focus{left:0;}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:12px max(16px, env(safe-area-inset-left)) 12px max(16px, env(safe-area-inset-right));
+  background:var(--header-bg);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid transparent;
+  transition:border-color .3s, background .3s;
+}
+.site-header.scrolled{border-bottom-color:var(--border);}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  letter-spacing:-.5px;
+  font-size:17px;
+  white-space:nowrap;
+  cursor:pointer;
+  background:none;border:none;padding:0;
+}
+.brand-mark{
+  width:30px;height:30px;flex:0 0 30px;
+  border-radius:9px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--neon),#00a52a);
+  color:#001a06;
+  font-size:14px;
+  box-shadow:0 0 18px rgba(0,255,65,0.35);
+}
+.brand-text{background:linear-gradient(100deg,var(--text),var(--neon));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+
+.header-search{
+  flex:1;
+  max-width:520px;
+  margin-left:auto;
+  position:relative;
+}
+.header-search input{
+  width:100%;
+  padding:11px 42px 11px 40px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  font-size:14px;
+  outline:none;
+  transition:border-color .25s, box-shadow .25s, background .25s;
+}
+.header-search input::placeholder{color:var(--text-3);}
+.header-search input:focus{
+  border-color:var(--neon-line);
+  background:var(--surface-2);
+  box-shadow:0 0 0 3px var(--neon-soft);
+}
+.header-search .s-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--text-3);font-size:14px;pointer-events:none;
+}
+.header-search .s-clear{
+  position:absolute;right:6px;top:50%;transform:translateY(-50%);
+  width:30px;height:30px;border-radius:50%;
+  border:none;background:transparent;color:var(--text-3);
+  cursor:pointer;display:none;place-items:center;font-size:15px;
+}
+.header-search .s-clear.show{display:grid;}
+.header-search .s-clear:hover{background:var(--surface-2);color:var(--text);}
+
+.icon-btn{
+  width:38px;height:38px;flex:0 0 38px;
+  border-radius:11px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  display:grid;place-items:center;
+  cursor:pointer;
+  font-size:15px;
+  transition:border-color .25s, background .25s, transform .2s;
+}
+.icon-btn:hover{border-color:var(--neon-line);background:var(--surface-2);}
+body.light .icon-btn{background:#fff;border-color:rgba(0,0,0,0.18);box-shadow:0 1px 3px rgba(0,0,0,0.08);}
+.icon-btn:active{transform:scale(.94);}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:clamp(38px,7vw,84px) clamp(16px,4vw,32px) clamp(26px,4vw,44px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:0;
+}
+
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 15px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  font-size:11.5px;
+  font-weight:600;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+  color:var(--text-2);
+  margin-bottom:22px;
+}
+.hero-eyebrow .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--neon);
+  box-shadow:0 0 10px var(--neon);
+  animation:pulseDot 2.6s ease-in-out infinite;
+}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.8);}}
+
+.hero-title{
+  font-size:clamp(2.3rem,7.4vw,4.6rem);
+  font-weight:700;
+  letter-spacing:-.03em;
+  line-height:1.02;
+  margin-bottom:16px;
+  background:linear-gradient(170deg,var(--text) 30%,var(--neon) 130%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{
+  font-size:clamp(.92rem,1.7vw,1.1rem);
+  color:var(--text-2);
+  max-width:520px;
+  line-height:1.65;
+  margin-bottom:clamp(26px,4vw,38px);
+}
+
+.hero-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  justify-content:center;
+  width:100%;
+  max-width:520px;
+}
+
+.cta{
+  flex:1 1 210px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:15px 20px;
+  border-radius:14px;
+  border:1px solid var(--border-strong);
+  background:var(--surface);
+  cursor:pointer;
+  text-align:left;
+  transition:transform .25s var(--ease), border-color .25s, background .25s, box-shadow .25s;
+  min-width:0;
+}
+.cta:hover{
+  transform:translateY(-3px);
+  border-color:var(--neon-line);
+  background:var(--surface-2);
+  box-shadow:var(--shadow);
+}
+.cta:active{transform:translateY(-1px) scale(.995);}
+.cta-icon{
+  width:40px;height:40px;flex:0 0 40px;
+  border-radius:11px;
+  display:grid;place-items:center;
+  background:var(--neon-soft);
+  border:1px solid var(--neon-line);
+  font-size:17px;
+}
+.cta-body{min-width:0;flex:1;}
+.cta-label{font-size:14.5px;font-weight:600;letter-spacing:-.01em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cta-meta{font-size:11.5px;color:var(--text-2);font-weight:500;display:block;margin-top:2px;}
+.cta-arrow{color:var(--text-3);font-size:15px;transition:transform .25s, color .25s;}
+.cta:hover .cta-arrow{transform:translateX(3px);color:var(--neon);}
+
+.hero-stats{
+  display:flex;
+  gap:clamp(22px,5vw,54px);
+  margin-top:clamp(28px,4vw,40px);
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.stat{display:flex;flex-direction:column;gap:3px;}
+.stat strong{
+  font-size:clamp(1.35rem,3vw,1.75rem);
+  font-weight:700;
+  letter-spacing:-.02em;
+  color:var(--text);
+  font-variant-numeric:tabular-nums;
+}
+.stat span{font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;color:var(--text-3);font-weight:600;}
+
+/* ============================================================
+   PASTAS / COLEÇÕES
+   ============================================================ */
+.section{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:0 clamp(16px,4vw,32px) clamp(30px,5vw,54px);
+}
+
+.section-head{
+  display:flex;
+  align-items:baseline;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+.section-title{
+  font-size:clamp(1rem,2vw,1.15rem);
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+.section-title em{color:var(--neon);font-style:normal;}
+.section-note{font-size:12.5px;color:var(--text-3);font-weight:400;}
+
+.folders{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:10px;
+}
+.folder{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  cursor:pointer;
+  text-align:left;
+  min-width:0;
+  transition:border-color .22s, background .22s, transform .22s var(--ease);
+}
+.folder:hover{border-color:var(--neon-line);background:var(--surface-2);transform:translateY(-2px);}
+.folder-ico{
+  width:30px;height:30px;flex:0 0 30px;border-radius:8px;
+  display:grid;place-items:center;
+  background:var(--neon-soft);
+  border:1px solid var(--neon-line);
+  font-size:13px;
+}
+.folder-name{
+  font-size:12.8px;
+  font-weight:500;
+  line-height:1.3;
+  overflow:hidden;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  min-width:0;
+}
+
+/* ============================================================
+   PÁGINA DE LISTA
+   ============================================================ */
+.page{display:none;}
 .page.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 
-.page-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:30px;}
-.page-header h1{font-size:clamp(1.8rem,4vw,2.8rem);}
-.page-header h1 span{color:var(--neon);}
-.page-header .back-btn{padding:10px 25px;border:1px solid var(--border);border-radius:30px;background:var(--card);color:var(--text);cursor:pointer;transition:0.3s;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-.page-header .back-btn:hover{border-color:var(--neon);box-shadow:var(--shadow);}
+.page-wrap{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:clamp(20px,3vw,34px) clamp(16px,4vw,32px) 60px;
+}
 
-.page-search{width:100%;max-width:500px;margin-bottom:30px;}
-.page-search input{width:100%;padding:12px 20px;border-radius:50px;border:2px solid var(--border);background:var(--card);color:var(--text);font-size:15px;outline:none;transition:0.3s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-.page-search input:focus{border-color:var(--neon);box-shadow:var(--shadow);}
+.page-top{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.back-btn{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 15px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:border-color .22s, background .22s, transform .22s;
+  white-space:nowrap;
+}
+.back-btn:hover{border-color:var(--neon-line);background:var(--surface-2);}
+.back-btn:active{transform:scale(.96);}
 
-.movies-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:20px;}
+.page-title{
+  font-size:clamp(1.25rem,3.4vw,1.85rem);
+  font-weight:700;
+  letter-spacing:-.02em;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.page-title .count-pill{
+  font-size:11.5px;
+  font-weight:600;
+  letter-spacing:.02em;
+  padding:4px 10px;
+  border-radius:999px;
+  background:var(--neon-soft);
+  border:1px solid var(--neon-line);
+  color:var(--neon);
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
+.toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+  padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.toolbar-search{
+  flex:1 1 240px;
+  min-width:180px;
+  position:relative;
+}
+.toolbar-search input{
+  width:100%;
+  padding:10px 38px 10px 36px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  font-size:13.5px;
+  outline:none;
+  transition:border-color .22s, box-shadow .22s, background .22s;
+}
+.toolbar-search input::placeholder{color:var(--text-3);}
+.toolbar-search input:focus{border-color:var(--neon-line);background:var(--surface-2);box-shadow:0 0 0 3px var(--neon-soft);}
+.toolbar-search .s-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:13px;pointer-events:none;}
+
+.chip-group{display:flex;gap:7px;flex-wrap:wrap;}
+.chip{
+  padding:8px 13px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:transparent;
+  font-size:12px;
+  font-weight:500;
+  cursor:pointer;
+  color:var(--text-2);
+  transition:.22s;
+  white-space:nowrap;
+}
+.chip:hover{border-color:var(--border-strong);color:var(--text);}
+.chip[aria-pressed="true"]{
+  background:var(--neon);
+  border-color:var(--neon);
+  color:#001a06;
+}
+
+/* ---------- GRADE ---------- */
+.movies-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(168px,1fr));
+  gap:16px;
+}
 
 .movie-card{
-  background:var(--card);
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  border-radius:var(--radius);
   border:1px solid var(--border);
-  border-radius:12px;
+  background:var(--surface);
   overflow:hidden;
-  text-align:center;
-  transition:transform 0.3s;
-  position:relative;
-  z-index:1;
-  padding:0;
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
+  transition:transform .3s var(--ease), border-color .3s, box-shadow .3s;
+  contain:content;
+}
+.movie-card:hover{
+  transform:translateY(-5px);
+  border-color:var(--neon-line);
+  box-shadow:var(--shadow-lg), 0 0 0 1px var(--neon-line);
 }
 
-.movie-card:hover{transform:translateY(-8px);}
-
-.movie-thumb{
+.poster{
+  position:relative;
   aspect-ratio:2/3;
-  position:relative;
+  background:var(--bg-soft);
   overflow:hidden;
-  background-size:contain;
-  background-repeat:no-repeat;
-  background-position:center;
-  background-color:#0d0d0d;
 }
-
-.movie-thumb-overlay{
+.poster img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:transform .5s var(--ease), opacity .4s;
+  opacity:0;
+}
+.poster img.loaded{opacity:1;}
+.movie-card:hover .poster img{transform:scale(1.045);}
+.poster img.placeholder{
+  object-fit:cover;
+  opacity:1;
+  filter:saturate(.25) brightness(.65);
+}
+.poster::after{
+  content:"";
   position:absolute;
-  top:0;left:0;width:100%;height:100%;
-  background:linear-gradient(rgba(0,0,0,0.05), rgba(0,0,0,0.35));
-  z-index:1;
+  inset:auto 0 0 0;
+  height:55%;
+  background:linear-gradient(to top, rgba(0,0,0,.82), transparent);
   pointer-events:none;
 }
 
-.movie-thumb-badge{
+.badge{
   position:absolute;
-  top:10px;
-  left:10px;
+  top:9px;
+  left:9px;
   z-index:2;
-  background:rgba(0,255,65,0.9);
-  color:#000;
-  font-size:10px;
-  font-weight:800;
-  padding:4px 10px;
-  border-radius:20px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-}
-
-.movie-card .movie-name{
-  font-size:14px;
+  font-size:9.5px;
   font-weight:600;
+  letter-spacing:.09em;
+  text-transform:uppercase;
+  padding:4px 8px;
+  border-radius:6px;
+  background:rgba(0,0,0,.62);
+  border:1px solid rgba(255,255,255,.18);
+  color:#eafff0;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+.badge.pasta{background:var(--neon);border-color:var(--neon);color:#001a06;}
+
+.year-badge{
+  position:absolute;
+  top:9px;
+  right:9px;
+  z-index:2;
+  font-size:10px;
+  font-weight:600;
+  padding:3px 7px;
+  border-radius:6px;
+  background:rgba(0,0,0,.62);
+  border:1px solid rgba(255,255,255,.14);
+  color:#cfe3d6;
+  font-variant-numeric:tabular-nums;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+}
+
+.card-body{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:11px 11px 12px;
+  flex:1;
+}
+.card-title{
+  font-size:13.2px;
+  font-weight:500;
+  line-height:1.35;
+  letter-spacing:-.005em;
   color:var(--text);
-  padding:12px 12px 4px;
-  line-height:1.3;
-  white-space:nowrap;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
   overflow:hidden;
-  text-overflow:ellipsis;
-  display:block;
-  min-height:auto;
-  margin:0;
+  min-height:2.7em;
 }
 
-.movie-card .movie-year{
-  font-size:12px;
-  color:var(--text2);
-  padding:0 12px 8px;
-  margin:0;
-}
-
-.movie-card .movie-btn{
-  display:block;
+.card-btn{
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:9px 10px;
+  border-radius:9px;
   background:var(--neon);
-  color:#000;
+  color:#001a06;
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.01em;
+  transition:filter .2s, transform .2s, box-shadow .2s;
+}
+.card-btn:hover{filter:brightness(1.1);box-shadow:0 0 18px rgba(0,255,65,.35);}
+.card-btn:active{transform:scale(.98);}
+.card-btn .arrow{font-size:11px;}
+
+/* ---------- SKELETON ---------- */
+.skeleton{
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  overflow:hidden;
+  background:var(--surface);
+}
+.sk-poster{aspect-ratio:2/3;background:linear-gradient(100deg,var(--surface) 20%,var(--surface-2) 40%,var(--surface) 60%);background-size:220% 100%;animation:shimmer 1.5s linear infinite;}
+.sk-line{height:11px;margin:11px;border-radius:5px;background:linear-gradient(100deg,var(--surface) 20%,var(--surface-2) 40%,var(--surface) 60%);background-size:220% 100%;animation:shimmer 1.5s linear infinite;}
+.sk-line.short{width:55%;margin-top:0;height:22px;}
+@keyframes shimmer{0%{background-position:120% 0;}100%{background-position:-20% 0;}}
+
+/* ---------- VAZIO ---------- */
+.empty{
+  grid-column:1/-1;
   text-align:center;
-  padding:10px;
-  margin:12px;
-  border-radius:8px;
-  text-decoration:none;
-  font-weight:700;
+  padding:clamp(40px,9vw,80px) 20px;
+}
+.empty-ico{font-size:38px;margin-bottom:14px;opacity:.55;}
+.empty h3{font-size:1.05rem;font-weight:600;margin-bottom:7px;}
+.empty p{font-size:13.5px;color:var(--text-2);line-height:1.6;max-width:380px;margin:0 auto;}
+
+/* ---------- PAGINAÇÃO ---------- */
+.pagination{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-top:clamp(28px,4vw,44px);
+}
+.pagination button{
+  min-width:38px;
+  height:38px;
+  padding:0 11px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text-2);
   font-size:13px;
-  transition:0.2s;
-  width:auto;
-  max-width:none;
-  box-shadow:none;
-  letter-spacing:0;
-  text-transform:none;
+  font-weight:500;
+  cursor:pointer;
+  transition:.2s;
+  font-variant-numeric:tabular-nums;
+}
+.pagination button:hover:not(:disabled){border-color:var(--neon-line);color:var(--text);background:var(--surface-2);}
+.pagination button.active{
+  background:var(--neon);
+  border-color:var(--neon);
+  color:#001a06;
+}
+.pagination button:disabled{opacity:.28;cursor:not-allowed;}
+.pagination .dots{color:var(--text-3);padding:0 4px;font-weight:500;}
+
+.results-info{
+  font-size:12.5px;
+  color:var(--text-3);
+  font-weight:400;
+  margin-bottom:14px;
+}
+.results-info b{color:var(--text-2);font-weight:600;font-variant-numeric:tabular-nums;}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer{
+  border-top:1px solid var(--border);
+  padding:30px clamp(16px,4vw,32px);
+  max-width:var(--max);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+}
+.footer-note{font-size:12px;color:var(--text-3);line-height:1.65;max-width:560px;font-weight:400;}
+.footer-note b{color:var(--text-2);}
+.to-top{
+  width:38px;height:38px;border-radius:11px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  display:grid;place-items:center;
+  cursor:pointer;font-size:14px;
+  transition:.22s;
+}
+.to-top:hover{border-color:var(--neon-line);background:var(--surface-2);transform:translateY(-2px);}
+
+/* ============================================================
+   TEMA CLARO — ajustes finos
+   ============================================================ */
+body.light .poster::after{
+  background:linear-gradient(to top, rgba(0,0,0,.78), transparent);
+}
+body.light .card-title{color:var(--text);}
+body.light .movie-card{
+  background:var(--bg-soft);
+  box-shadow:0 1px 2px rgba(0,0,0,0.05);
+}
+body.light .movie-card:hover{box-shadow:var(--shadow-lg);}
+body.light .site-header{box-shadow:0 1px 0 var(--border);}
+body.light .folder{background:var(--bg-soft);}
+body.light .cta{background:var(--bg-soft);}
+body.light .icon-btn,
+body.light .back-btn,
+body.light .to-top,
+body.light .pagination button{background:var(--bg-soft);}
+body.light .toolbar-search input,
+body.light .header-search input{background:var(--bg-soft);}
+body.light .hero-title{
+  background:linear-gradient(170deg,var(--text) 35%,var(--neon) 120%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
 }
 
-.movie-card .movie-btn:hover{
-  background:#00cc33;
-  transform:scale(1.02);
-  box-shadow:0 0 20px rgba(0,255,65,0.4);
+/* ============================================================
+   RESPONSIVO
+   ============================================================ */
+@media(max-width:860px){
+  .header-search{max-width:none;}
+  .site-header{gap:10px;}
+  .brand-text{display:none;}
 }
-
-.pagination{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:40px 0;}
-.pagination button{padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);cursor:pointer;transition:0.3s;font-weight:600;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
-.pagination button:hover,
-.pagination button.active{background:var(--neon);color:#000;border-color:var(--neon);}
-.pagination button:disabled{opacity:0.3;cursor:not-allowed;}
-.pagination-dots{padding:8px 4px;color:var(--text2);font-weight:700;}
-
-.total-count{text-align:center;font-size:14px;color:var(--text2);margin-bottom:20px;}
-.total-count strong{color:var(--neon);font-size:18px;}
 
 @media(max-width:768px){
-  .hero-buttons{gap:12px;}
-  .hero-btn{padding:14px 30px;font-size:14px;width:100%;max-width:280px;}
-  .movies-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
-  .movie-card .movie-name{font-size:13px;}
-  .movie-card .movie-btn{font-size:12px;padding:8px 15px;}
-  .page-header h1{font-size:22px;}
-  .theme-toggle{top:10px;right:10px;padding:6px 14px;font-size:12px;}
+  .movies-grid{grid-template-columns:repeat(auto-fill,minmax(138px,1fr));gap:12px;}
+  .card-title{font-size:12.2px;}
+  .card-btn{font-size:11.5px;padding:8px;}
+  .folders{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+  .hero-actions{max-width:100%;}
+  .cta{flex:1 1 100%;}
 }
 
 @media(max-width:480px){
-  .movies-grid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;}
-  .hero-logo{font-size:2.5rem;}
-  .hero-sub{font-size:0.9rem;}
+  .movies-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .card-body{padding:9px;}
+  .hero-title{font-size:clamp(2rem,11vw,2.6rem);}
+  .hero{padding-top:26px;}
+  .site-header{padding:10px 12px;}
+  .page-wrap{padding-top:16px;}
+  .folders{grid-template-columns:1fr 1fr;}
+  .folder{padding:10px;}
+  .folder-name{font-size:11.8px;}
+  .section-head{margin-bottom:12px;}
+  .hero-stats{gap:20px;}
+  .pagination button{min-width:34px;height:34px;padding:0 8px;font-size:12px;}
+  .toolbar{gap:8px;}
+  .toolbar-search{flex:1 1 100%;}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  #bg-canvas{opacity:.4;}
+  .movie-card:hover{transform:none;}
 }
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
-<div class="cursor-trail" id="cursorTrail"></div>
-<div class="meteor-container" id="meteorContainer"></div>
-<div class="video-rain" id="videoRain"></div>
+<a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
 
-<button class="theme-toggle" onclick="toggleTheme()">🌓 Tema</button>
+<canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-<div class="hero" id="pageHome">
-    <div class="hero-logo">CINE TERABOX</div>
-    <div class="hero-sub">🎬 Seu acervo completo de filmes</div>
-    <div class="hero-search">
-        <input type="text" id="homeSearch" placeholder="🔍 Buscar filmes em todo o acervo..." oninput="searchAllMovies()">
-        <span class="search-icon">🎯</span>
-    </div>
-    <div class="hero-buttons">
-        <button class="hero-btn" onclick="openPage('terabox')">📦 Filmes Terabox</button>
-        <button class="hero-btn" onclick="openPage('drive')">☁️ Filmes no Drive</button>
-    </div>
-    <div class="hero-stats">
-        <span><strong id="countTerabox">0</strong> Filmes Terabox</span>
-        <span><strong id="countDrive">0</strong> Filmes Google Drive</span>
-        <span><strong id="countTotal">0</strong> Total</span>
-    </div>
-</div>
+<header class="site-header" id="siteHeader">
+  <button class="brand" onclick="goHome()" aria-label="CINE TERABOX — início">
+    <span class="brand-mark" aria-hidden="true">▶</span>
+    <span class="brand-text">CINE TERABOX</span>
+  </button>
 
-<div class="page" id="pageTerabox">
-    <div class="page-header">
-        <h1>📦 <span>Filmes Terabox</span></h1>
-        <button class="back-btn" onclick="goHome()">← Voltar</button>
-    </div>
-    <div class="page-search">
-        <input type="text" id="searchTerabox" placeholder="🔍 Buscar filmes Terabox..." oninput="filterPage('terabox')">
-    </div>
-    <div class="total-count">Total: <strong id="totalTerabox">0</strong> filmes</div>
-    <div class="movies-grid" id="gridTerabox"></div>
-    <div class="pagination" id="paginationTerabox"></div>
-</div>
+  <div class="header-search" role="search">
+    <span class="s-icon" aria-hidden="true">🔍</span>
+    <input type="search" id="globalSearch" placeholder="Buscar em todo o acervo…" autocomplete="off" aria-label="Buscar em todo o acervo">
+    <button class="s-clear" id="clearSearch" aria-label="Limpar busca">✕</button>
+  </div>
 
-<div class="page" id="pageDrive">
-    <div class="page-header">
-        <h1>☁️ <span>Filmes Google Drive</span></h1>
-        <button class="back-btn" onclick="goHome()">← Voltar</button>
+  <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Alternar tema claro e escuro" title="Alternar tema">🌓</button>
+</header>
+
+<main id="conteudo">
+
+  <!-- ========== HOME ========== -->
+  <div class="page active" id="pageHome">
+    <section class="hero">
+      <div class="hero-eyebrow"><span class="dot" aria-hidden="true"></span> Acervo completo</div>
+      <h1 class="hero-title">CINE TERABOX</h1>
+      <p class="hero-sub">Filmes organizados em duas bibliotecas. Escolha onde procurar, encontre em segundos.</p>
+
+      <div class="hero-actions">
+        <button class="cta" onclick="openPage('terabox')">
+          <span class="cta-icon" aria-hidden="true">📦</span>
+          <span class="cta-body">
+            <span class="cta-label">Filmes Terabox</span>
+            <span class="cta-meta"><span id="countTerabox">0</span> títulos</span>
+          </span>
+          <span class="cta-arrow" aria-hidden="true">→</span>
+        </button>
+        <button class="cta" onclick="openPage('drive')">
+          <span class="cta-icon" aria-hidden="true">☁️</span>
+          <span class="cta-body">
+            <span class="cta-label">Filmes no Drive</span>
+            <span class="cta-meta"><span id="countDrive">0</span> títulos</span>
+          </span>
+          <span class="cta-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><strong id="countTotal">0</strong><span>Total</span></div>
+        <div class="stat"><strong id="countFolders">0</strong><span>Coleções</span></div>
+        <div class="stat"><strong id="countCovers">0</strong><span>Com capa</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="foldersSection" hidden>
+      <div class="section-head">
+        <h2 class="section-title">Coleções <em>Terabox</em></h2>
+        <span class="section-note">pastas prontas por gênero e franquia</span>
+      </div>
+      <div class="folders" id="foldersGrid"></div>
+    </section>
+
+    <section class="section" id="recentSection" hidden>
+      <div class="section-head">
+        <h2 class="section-title">Em <em>destaque</em></h2>
+        <span class="section-note">uma amostra do acervo</span>
+      </div>
+      <div class="movies-grid" id="recentGrid"></div>
+    </section>
+  </div>
+
+  <!-- ========== TERABOX ========== -->
+  <div class="page" id="pageTerabox">
+    <div class="page-wrap">
+      <div class="page-top">
+        <button class="back-btn" onclick="goHome()">← Início</button>
+        <h1 class="page-title">📦 Filmes Terabox <span class="count-pill" id="pillTerabox">0</span></h1>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <span class="s-icon" aria-hidden="true">🔍</span>
+          <input type="search" id="searchTerabox" placeholder="Buscar nesta biblioteca…" autocomplete="off" aria-label="Buscar filmes Terabox" oninput="filterPage('terabox')">
+        </div>
+        <div class="chip-group" role="group" aria-label="Filtros">
+          <button class="chip" data-filter="all" aria-pressed="true" onclick="setFilter('terabox','all')">Tudo</button>
+          <button class="chip" data-filter="pasta" aria-pressed="false" onclick="setFilter('terabox','pasta')">Coleções</button>
+          <button class="chip" data-filter="ano" aria-pressed="false" onclick="setFilter('terabox','ano')">Com ano</button>
+          <button class="chip" data-filter="capa" aria-pressed="false" onclick="setFilter('terabox','capa')">Com capa</button>
+        </div>
+      </div>
+
+      <div class="results-info" id="infoTerabox"></div>
+      <div class="movies-grid" id="gridTerabox" aria-live="polite"></div>
+      <nav class="pagination" id="paginationTerabox" aria-label="Paginação Terabox"></nav>
     </div>
-    <div class="page-search">
-        <input type="text" id="searchDrive" placeholder="🔍 Buscar filmes no Drive..." oninput="filterPage('drive')">
+  </div>
+
+  <!-- ========== DRIVE ========== -->
+  <div class="page" id="pageDrive">
+    <div class="page-wrap">
+      <div class="page-top">
+        <button class="back-btn" onclick="goHome()">← Início</button>
+        <h1 class="page-title">☁️ Filmes no Drive <span class="count-pill" id="pillDrive">0</span></h1>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <span class="s-icon" aria-hidden="true">🔍</span>
+          <input type="search" id="searchDrive" placeholder="Buscar nesta biblioteca…" autocomplete="off" aria-label="Buscar filmes no Drive" oninput="filterPage('drive')">
+        </div>
+        <div class="chip-group" role="group" aria-label="Filtros">
+          <button class="chip" data-filter="all" aria-pressed="true" onclick="setFilter('drive','all')">Tudo</button>
+          <button class="chip" data-filter="pasta" aria-pressed="false" onclick="setFilter('drive','pasta')">Coleções</button>
+          <button class="chip" data-filter="ano" aria-pressed="false" onclick="setFilter('drive','ano')">Com ano</button>
+          <button class="chip" data-filter="capa" aria-pressed="false" onclick="setFilter('drive','capa')">Com capa</button>
+        </div>
+      </div>
+
+      <div class="results-info" id="infoDrive"></div>
+      <div class="movies-grid" id="gridDrive" aria-live="polite"></div>
+      <nav class="pagination" id="paginationDrive" aria-label="Paginação Drive"></nav>
     </div>
-    <div class="total-count">Total: <strong id="totalDrive">0</strong> filmes</div>
-    <div class="movies-grid" id="gridDrive"></div>
-    <div class="pagination" id="paginationDrive"></div>
-</div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p class="footer-note"><b>CINE TERABOX</b> — acervo pessoal de filmes. Todos os arquivos estão hospedados no Terabox e no Google Drive; este site apenas organiza e aponta os links.</p>
+  <button class="to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Voltar ao topo">↑</button>
+</footer>
 
 <script>
 // ============================================================
-// DICIONARIO DE CAPAS (nome do filme -> link da capa)
+// DADOS
 // ============================================================
 const CAPAS = {
 "Missao de Sobrevivencia":"https://image.tmdb.org/t/p/w500/xsmNNU5UbnurOnCOdUHbpv2XyFI.jpg",
@@ -1651,18 +2321,6 @@ const CAPAS = {
 };
 
 // ============================================================
-// GIF FALLBACK (quando nao tem capa)
-// ============================================================
-const GIF_URL = "https://cdn.pixabay.com/animation/2023/02/09/23/14/23-14-59-834_512.gif";
-
-function getGifParaFilme(filme){
-  if(CAPAS[filme.t]){
-    return CAPAS[filme.t];
-  }
-  return GIF_URL;
-}
-
-// ============================================================
 // FILMES TERABOX
 // ============================================================
 const filmesTerabox = [
@@ -2010,6 +2668,10 @@ const filmesTerabox = [
 {t:"Mazzaropi O Lamparina",ano:"1964",link:"https://1024terabox.com/s/1CydgUPyPop9VMJcL9-WLEA"},
 {t:"Meia Noite e Um",ano:"1993",link:"https://1024terabox.com/s/1fDrPKkGbqgQOA7-PEkJ1lQ"}
 ];
+
+// ============================================================
+// FILMES GOOGLE DRIVE
+// ============================================================
 
 // ============================================================
 // FILMES GOOGLE DRIVE
@@ -3062,374 +3724,694 @@ const filmesDrive = [
 {t:"Um Filho Que Caiu do Céu",ano:"",link:"https://drive.google.com/file/d/1s6Fz2fvU9BkdZHEDquzzKfR5QZYd5_X-/view"}
 ];
 
-// ============================================================
-// SISTEMA OTIMIZADO
-// ============================================================
 
+const GIF_URL = "https://cdn.pixabay.com/animation/2023/02/09/23/14/23-14-59-834_512.gif";
+
+function getGifParaFilme(filme){
+  return CAPAS[filme.t] || GIF_URL;
+}
+
+// ============================================================
+// ESTADO
+// ============================================================
 const ITEMS_PER_PAGE = 24;
-let currentPage = { terabox: 1, drive: 1 };
+const currentPage = { terabox: 1, drive: 1 };
+const currentFilter = { terabox: 'all', drive: 'all' };
+let activeType = null;
 
-function openPage(type){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('pageHome').style.display = 'none';
-  document.getElementById('page' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
-  renderPage(type);
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function goHome(){
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('pageHome').style.display = 'flex';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  updateStats();
-}
+const el = (id) => document.getElementById(id);
+const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
 
 function getData(type){
   return type === 'terabox' ? filmesTerabox : filmesDrive;
 }
 
+function isFolder(m){ return m.ano === 'PASTA' || /^\s*➥/.test(m.t); }
+
+function cleanTitle(t){
+  return t.replace(/^\s*➥\s*/, '').trim();
+}
+
+// ============================================================
+// FILTRAGEM
+// ============================================================
 function getFiltered(type){
   const data = getData(type);
-  const search = document.getElementById('search' + type.charAt(0).toUpperCase() + type.slice(1)).value.toLowerCase().trim();
+  const input = el('search' + cap(type));
+  const q = input ? input.value.toLowerCase().trim() : '';
+  const filter = currentFilter[type];
 
-  if(search.length < 2) return data;
+  let out = data;
 
-  return data.filter(m => m.t.toLowerCase().includes(search));
+  if(filter === 'pasta') out = out.filter(isFolder);
+  else if(filter === 'ano') out = out.filter(m => m.ano && m.ano !== 'PASTA');
+  else if(filter === 'capa') out = out.filter(m => CAPAS[m.t]);
+
+  if(q.length >= 2){
+    out = out.filter(m => m.t.toLowerCase().includes(q));
+  }
+
+  return out;
+}
+
+function setFilter(type, filter){
+  currentFilter[type] = filter;
+  const page = el('page' + cap(type));
+  if(page){
+    page.querySelectorAll('.chip').forEach(c => {
+      c.setAttribute('aria-pressed', String(c.dataset.filter === filter));
+    });
+  }
+  currentPage[type] = 1;
+  renderPage(type);
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function cardHtml(m, index){
+  const capa = getGifParaFilme(m);
+  const folder = isFolder(m);
+  const titulo = cleanTitle(m.t);
+  const ano = m.ano && m.ano !== 'PASTA' ? m.ano : '';
+
+  const badge = folder
+    ? '<span class="badge pasta">Coleção</span>'
+    : '<span class="badge">Filme</span>';
+
+  const yearBadge = ano ? '<span class="year-badge">' + escapeHtml(ano) + '</span>' : '';
+
+  const btnLabel = folder ? 'Abrir pasta' : 'Assistir';
+
+  return ''
+    + '<article class="movie-card">'
+    +   '<div class="poster">'
+    +     badge
+    +     yearBadge
+    +     '<img src="' + escapeAttr(capa) + '" alt="Capa de ' + escapeAttr(titulo) + '" '
+    +       'loading="' + (index < 8 ? 'eager' : 'lazy') + '" decoding="async" '
+    +       'onload="this.classList.add(\'loaded\')" onerror="imgFallback(this)">'
+    +   '</div>'
+    +   '<div class="card-body">'
+    +     '<h3 class="card-title" title="' + escapeAttr(titulo) + '">' + escapeHtml(titulo) + '</h3>'
+    +     '<a class="card-btn" href="' + escapeAttr(m.link) + '" target="_blank" rel="noopener noreferrer" '
+    +       'aria-label="' + escapeAttr(btnLabel + ': ' + titulo) + '">'
+    +       btnLabel + ' <span class="arrow" aria-hidden="true">↗</span>'
+    +     '</a>'
+    +   '</div>'
+    + '</article>';
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function escapeAttr(s){ return escapeHtml(s); }
+
+function imgFallback(img){
+  img.onerror = null;
+  img.src = GIF_URL;
+  img.classList.add('loaded');
+}
+
+function renderSkeleton(grid, n){
+  let html = '';
+  for(let i = 0; i < n; i++){
+    html += '<div class="skeleton"><div class="sk-poster"></div><div class="sk-line"></div><div class="sk-line short"></div></div>';
+  }
+  grid.innerHTML = html;
 }
 
 function renderPage(type){
+  const grid = el('grid' + cap(type));
+  if(!grid) return;
+
   const data = getFiltered(type);
   const total = data.length;
-  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(total / ITEMS_PER_PAGE));
 
   let page = currentPage[type];
-  if(page > totalPages) page = totalPages || 1;
-
+  if(page > totalPages) page = totalPages;
+  if(page < 1) page = 1;
   currentPage[type] = page;
 
   const start = (page - 1) * ITEMS_PER_PAGE;
   const pageItems = data.slice(start, start + ITEMS_PER_PAGE);
 
-  const grid = document.getElementById('grid' + type.charAt(0).toUpperCase() + type.slice(1));
+  const pill = el('pill' + cap(type));
+  if(pill) pill.textContent = total;
 
-  let cardsHtml = '';
+  const info = el('info' + cap(type));
+  if(info){
+    if(total === 0){
+      info.innerHTML = '';
+    }else{
+      info.innerHTML = 'Mostrando <b>' + (start + 1) + '–' + (start + pageItems.length) + '</b> de <b>' + total + '</b>';
+    }
+  }
 
-  pageItems.forEach((m) => {
-    const gifUrl = getGifParaFilme(m);
-    const anoHtml = m.ano ? `<div class="movie-year">📅 ${m.ano}</div>` : '';
+  if(total === 0){
+    grid.innerHTML = '<div class="empty">'
+      + '<div class="empty-ico" aria-hidden="true">🎬</div>'
+      + '<h3>Nada encontrado</h3>'
+      + '<p>Tente outro termo ou toque em “Tudo” para limpar os filtros.</p>'
+      + '</div>';
+    el('pagination' + cap(type)).innerHTML = '';
+    return;
+  }
 
-    cardsHtml += `
-      <div class="movie-card">
-        <div class="movie-thumb" style="background-image:url('${gifUrl}');">
-          <div class="movie-thumb-overlay"></div>
-          <div class="movie-thumb-badge">▶ FILME</div>
-        </div>
-        <div class="movie-name">${m.t}</div>
-        ${anoHtml}
-        <a href="${m.link}" target="_blank" rel="noopener noreferrer" class="movie-btn">⬇ Assistir / Baixar</a>
-      </div>
-    `;
-  });
+  let html = '';
+  for(let i = 0; i < pageItems.length; i++){
+    html += cardHtml(pageItems[i], i);
+  }
+  grid.innerHTML = html;
 
-  grid.innerHTML = cardsHtml;
-
-  document.getElementById('total' + type.charAt(0).toUpperCase() + type.slice(1)).textContent = total;
-
-  document.getElementById('pagination' + type.charAt(0).toUpperCase() + type.slice(1)).innerHTML =
-    buildPagination(type, page, totalPages);
+  el('pagination' + cap(type)).innerHTML = buildPagination(type, page, totalPages);
 }
 
+// ============================================================
+// PAGINAÇÃO
+// ============================================================
 function pageButton(type, i, current){
-  return `<button class="${i === current ? 'active' : ''}" onclick="changePage('${type}', ${i})">${i}</button>`;
+  const active = i === current;
+  return '<button' + (active ? ' class="active" aria-current="page"' : '')
+    + ' onclick="changePage(\'' + type + '\',' + i + ')">' + i + '</button>';
 }
 
 function buildPagination(type, page, totalPages){
-  let html = `<button onclick="changePage('${type}', ${page - 1})" ${page <= 1 ? 'disabled' : ''}>◀</button>`;
+  if(totalPages <= 1) return '';
+
+  let html = '<button onclick="changePage(\'' + type + '\',' + (page - 1) + ')"'
+    + (page <= 1 ? ' disabled' : '') + ' aria-label="Página anterior">◀</button>';
 
   const maxButtons = 7;
 
   if(totalPages <= maxButtons){
-    for(let i = 1; i <= totalPages; i++){
-      html += pageButton(type, i, page);
-    }
+    for(let i = 1; i <= totalPages; i++) html += pageButton(type, i, page);
   }else{
     html += pageButton(type, 1, page);
 
-    let start = Math.max(2, page - 2);
-    let end = Math.min(totalPages - 1, page + 2);
+    let start = Math.max(2, page - 1);
+    let end = Math.min(totalPages - 1, page + 1);
 
-    if(start > 2){
-      html += `<span class="pagination-dots">…</span>`;
-    }
-
-    for(let i = start; i <= end; i++){
-      html += pageButton(type, i, page);
-    }
-
-    if(end < totalPages - 1){
-      html += `<span class="pagination-dots">…</span>`;
-    }
+    if(start > 2) html += '<span class="dots">…</span>';
+    for(let i = start; i <= end; i++) html += pageButton(type, i, page);
+    if(end < totalPages - 1) html += '<span class="dots">…</span>';
 
     html += pageButton(type, totalPages, page);
   }
 
-  html += `<button onclick="changePage('${type}', ${page + 1})" ${page >= totalPages ? 'disabled' : ''}>▶</button>`;
+  html += '<button onclick="changePage(\'' + type + '\',' + (page + 1) + ')"'
+    + (page >= totalPages ? ' disabled' : '') + ' aria-label="Próxima página">▶</button>';
 
   return html;
 }
 
 function changePage(type, page){
   const data = getFiltered(type);
-  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
-
+  const totalPages = Math.max(1, Math.ceil(data.length / ITEMS_PER_PAGE));
   if(page < 1) page = 1;
-  if(page > totalPages) page = totalPages || 1;
+  if(page > totalPages) page = totalPages;
 
   currentPage[type] = page;
-
   renderPage(type);
 
-  window.scrollTo({ top: 300, behavior: 'smooth' });
+  const top = el('page' + cap(type)).getBoundingClientRect().top + window.pageYOffset - 80;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
-const filterTimers = {};
+// ============================================================
+// NAVEGAÇÃO
+// ============================================================
+function openPage(type, opts){
+  opts = opts || {};
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = el('page' + cap(type));
+  if(!page) return;
+  page.classList.add('active');
+  activeType = type;
 
-function filterPage(type){
-  clearTimeout(filterTimers[type]);
+  currentPage[type] = 1;
 
-  filterTimers[type] = setTimeout(() => {
-    currentPage[type] = 1;
-    renderPage(type);
-  }, 200);
+  if(opts.query !== undefined){
+    const input = el('search' + cap(type));
+    if(input) input.value = opts.query;
+  }
+
+  renderSkeleton(el('grid' + cap(type)), Math.min(ITEMS_PER_PAGE, 12));
+  requestAnimationFrame(() => renderPage(type));
+
+  if(!opts.keepScroll){
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  if(history.replaceState) history.replaceState(null, '', '#' + type);
 }
 
-let searchTimer;
+function goHome(){
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  el('pageHome').classList.add('active');
+  activeType = null;
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  if(history.replaceState) history.replaceState(null, '', '#');
+}
+
+// ============================================================
+// BUSCA GLOBAL
+// ============================================================
+let searchTimer = null;
 
 function searchAllMovies(){
   clearTimeout(searchTimer);
-
   searchTimer = setTimeout(() => {
-    const query = document.getElementById('homeSearch').value.toLowerCase().trim();
+    const q = el('globalSearch').value.toLowerCase().trim();
+    const clear = el('clearSearch');
+    if(clear) clear.classList.toggle('show', q.length > 0);
 
-    if(query.length < 2) return;
-
-    const foundT = filmesTerabox.filter(m => m.t.toLowerCase().includes(query));
-    const foundD = filmesDrive.filter(m => m.t.toLowerCase().includes(query));
-
-    if(foundT.length > 0 || foundD.length > 0){
-      const type = foundT.length >= foundD.length ? 'terabox' : 'drive';
-
-      openPage(type);
-
-      document.getElementById('search' + type.charAt(0).toUpperCase() + type.slice(1)).value = query;
-
-      renderPage(type);
+    if(q.length < 2){
+      if(activeType) renderPage(activeType);
+      return;
     }
-  }, 200);
+
+    const foundT = filmesTerabox.filter(m => m.t.toLowerCase().includes(q));
+    const foundD = filmesDrive.filter(m => m.t.toLowerCase().includes(q));
+
+    if(foundT.length === 0 && foundD.length === 0){
+      if(activeType) renderPage(activeType);
+      return;
+    }
+
+    // se já está numa biblioteca e ela tem resultados, refina ali
+    if(activeType){
+      const mine = activeType === 'terabox' ? foundT : foundD;
+      if(mine.length > 0){
+        const input = el('search' + cap(activeType));
+        if(input) input.value = q;
+        currentPage[activeType] = 1;
+        renderPage(activeType);
+        return;
+      }
+    }
+
+    const type = foundT.length >= foundD.length ? 'terabox' : 'drive';
+    openPage(type, { query: q });
+  }, 180);
 }
 
-function updateStats(){
-  document.getElementById('countTerabox').textContent = filmesTerabox.length;
-  document.getElementById('countDrive').textContent = filmesDrive.length;
-  document.getElementById('countTotal').textContent = filmesTerabox.length + filmesDrive.length;
+// ============================================================
+// HOME: COLEÇÕES E DESTAQUES
+// ============================================================
+function renderHomeExtras(){
+  // coleções
+  const pastas = filmesTerabox.filter(isFolder);
+  const foldersGrid = el('foldersGrid');
+  const foldersSection = el('foldersSection');
+
+  if(pastas.length && foldersGrid){
+    foldersSection.hidden = false;
+    let html = '';
+    pastas.forEach(p => {
+      html += '<button class="folder" onclick="openFolder(this)" data-link="' + escapeAttr(p.link) + '">'
+        + '<span class="folder-ico" aria-hidden="true">📁</span>'
+        + '<span class="folder-name">' + escapeHtml(cleanTitle(p.t)) + '</span>'
+        + '</button>';
+    });
+    foldersGrid.innerHTML = html;
+  }
+
+  // destaques: filmes com capa, intercalando as duas bibliotecas
+  const comCapaT = filmesTerabox.filter(m => CAPAS[m.t] && !isFolder(m));
+  const comCapaD = filmesDrive.filter(m => CAPAS[m.t] && !isFolder(m));
+  const mix = [];
+  const max = 12;
+  for(let i = 0; i < max; i++){
+    if(comCapaT[i] && mix.length < max) mix.push(comCapaT[i]);
+    if(comCapaD[i] && mix.length < max) mix.push(comCapaD[i]);
+  }
+
+  const recentGrid = el('recentGrid');
+  const recentSection = el('recentSection');
+  if(mix.length && recentGrid){
+    recentSection.hidden = false;
+    let html = '';
+    mix.forEach((m, i) => { html += cardHtml(m, i); });
+    recentGrid.innerHTML = html;
+  }
+
+  // estatísticas
+  el('countTerabox').textContent = filmesTerabox.length;
+  el('countDrive').textContent = filmesDrive.length;
+  el('countTotal').textContent = filmesTerabox.length + filmesDrive.length;
+  el('countFolders').textContent = pastas.length;
+
+  const totalCapas = filmesTerabox.filter(m => CAPAS[m.t]).length + filmesDrive.filter(m => CAPAS[m.t]).length;
+  el('countCovers').textContent = totalCapas;
 }
 
+function openFolder(btn){
+  window.open(btn.dataset.link, '_blank', 'noopener,noreferrer');
+}
+
+// ============================================================
+// TEMA
+// ============================================================
 function toggleTheme(){
-  document.body.classList.toggle('light');
+  const light = document.body.classList.toggle('light');
+  try{
+    localStorage.setItem('cine-theme', light ? 'light' : 'dark');
+  }catch(e){}
+  syncThemeBtn();
+  // pequeno atraso: deixa o CSS repintar antes de redesenhar o fundo
+  requestAnimationFrame(() => document.documentElement.classList.toggle('theme-light', light));
+}
+
+function syncThemeBtn(){
+  const btn = el('themeBtn');
+  if(!btn) return;
+  const light = document.body.classList.contains('light');
+  // mostra o tema que o clique VAI aplicar
+  btn.textContent = light ? '🌙' : '☀️';
+  btn.classList.toggle('is-light', light);
+  btn.setAttribute('aria-pressed', String(light));
+  btn.setAttribute('title', light ? 'Mudar para tema escuro' : 'Mudar para tema claro');
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', light ? '#f4f6f5' : '#08090a');
 }
 
 // ============================================================
-// EFEITOS OTIMIZADOS
+// FUNDO EFEITO - ESTUDIO NEON (rede discreta + feixe de projetor)
 // ============================================================
+(function(){
+  const bgCanvas = document.getElementById('bg-canvas');
+  const bgCtx = bgCanvas.getContext('2d', { alpha: true });
+  if(!bgCtx) return;
 
-function createMeteor(){
-  if(document.hidden) return;
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const COARSE  = window.matchMedia('(pointer: coarse)').matches;
+  const isMobile = COARSE || /Android|iPhone|iPad|iPod|Mobile|Opera Mini/i.test(navigator.userAgent);
+  const weakDevice = isMobile || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
 
-  const container = document.getElementById('meteorContainer');
+  const DPR_CAP    = isMobile ? 1.5 : 2;
+  const POINTS     = REDUCED ? 18 : (isMobile ? 26 : 46);
+  const MAX_DIST   = isMobile ? 120 : 175;
+  const LINK_ALPHA = isMobile ? 0.14 : 0.17;
+  const TARGET_FPS = isMobile ? 30 : 60;
+  const FRAME_MS   = 1000 / TARGET_FPS;
+  const MOUSE_R    = isMobile ? 0 : 130;
 
-  if(container.childElementCount > 40) return;
+  const NEON     = '#00ff41';
+  const NEON_DIM = '#00c233';
 
-  const m = document.createElement('div');
-  m.className = 'meteor';
-  m.style.left = Math.random() * innerWidth + 'px';
-  m.style.top = Math.random() * innerHeight * 0.5 + 'px';
-  m.style.setProperty('--duration', (0.7 + Math.random() * 1.2) + 's');
+  let BW = 0, BH = 0, DPR = 1;
+  let stars = [];
+  const points = [];
 
-  container.appendChild(m);
+  function makePoint(){
+    const z = Math.random() * 0.6 + 0.4;
+    return {
+      x: Math.random() * BW,
+      y: Math.random() * BH,
+      z: z,
+      vx: (Math.random() - 0.5) * 0.16 * z,
+      vy: (Math.random() - 0.5) * 0.16 * z,
+      r: 0.8 + Math.random() * 1.3,
+      dim: Math.random() < 0.5,
+      pulse: Math.random() * Math.PI * 2
+    };
+  }
 
-  setTimeout(() => m.remove(), 2000);
-}
+  function resizeBg(){
+    DPR = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+    BW = Math.max(window.innerWidth, 320);
+    BH = Math.max(window.innerHeight, 320);
 
-function createVideoFrame(){
-  if(document.hidden) return;
+    bgCanvas.width  = Math.round(BW * DPR);
+    bgCanvas.height = Math.round(BH * DPR);
+    bgCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-  const container = document.getElementById('videoRain');
+    points.forEach(p => {
+      if(p.x < -40 || p.x > BW + 40) p.x = Math.random() * BW;
+      if(p.y < -40 || p.y > BH + 40) p.y = Math.random() * BH;
+    });
 
-  if(container.childElementCount > 30) return;
-
-  const f = document.createElement('div');
-  f.className = 'video-frame';
-  f.style.left = Math.random() * innerWidth + 'px';
-  f.style.animationDuration = (3 + Math.random() * 3) + 's';
-  f.textContent = ['🎬','📺','🎥','📽'][Math.floor(Math.random() * 4)];
-
-  container.appendChild(f);
-
-  setTimeout(() => f.remove(), 6000);
-}
-
-setInterval(createMeteor, 900);
-setInterval(createVideoFrame, 1400);
-
-// ============================================================
-// CALDA DE METEORO VERDE NO MOUSE
-// ============================================================
-
-const trailContainer = document.getElementById('cursorTrail');
-let lastTrailTime = 0;
-const TRAIL_DELAY = 18;
-const MAX_TRAIL = 35;
-
-document.addEventListener('mousemove', (e) => {
-  if(document.hidden) return;
-
-  const now = performance.now();
-
-  if(now - lastTrailTime < TRAIL_DELAY) return;
-
-  lastTrailTime = now;
-
-  if(trailContainer.childElementCount > MAX_TRAIL){
-    if(trailContainer.firstElementChild){
-      trailContainer.firstElementChild.remove();
+    stars = [];
+    const starCount = isMobile ? 45 : 110;
+    for(let i = 0; i < starCount; i++){
+      stars.push({
+        x: Math.random() * BW,
+        y: Math.random() * BH,
+        r: Math.random() * 0.7 + 0.2,
+        a: Math.random() * 0.22 + 0.05,
+        tw: Math.random() * Math.PI * 2,
+        sp: 0.004 + Math.random() * 0.012
+      });
     }
   }
 
-  const dot = document.createElement('div');
-  dot.className = 'trail-dot';
-  dot.style.left = (e.clientX - 4) + 'px';
-  dot.style.top = (e.clientY - 4) + 'px';
+  resizeBg();
+  for(let i = 0; i < POINTS; i++) points.push(makePoint());
 
-  trailContainer.appendChild(dot);
+  let mx = -9999, my = -9999, mouseActive = false;
 
-  setTimeout(() => dot.remove(), 650);
-}, { passive: true });
+  let beamT = 0;
+  const BEAM_PERIOD = 8.0;
+  const BEAM_SPEED  = 0.30;
+  const CYCLE = BEAM_SPEED + BEAM_PERIOD;
 
-// ============================================================
-// FUNDO EFEITO (PONTOS E LINHAS) - COBRINDO PAGINA INTEIRA
-// ============================================================
-const bgCanvas = document.getElementById('bg-canvas');
-const bgCtx = bgCanvas.getContext('2d');
-
-let BW, BH;
-function resizeBg() {
-  BW = bgCanvas.width = window.innerWidth;
-  BH = bgCanvas.height = Math.max(document.body.scrollHeight, window.innerHeight);
-  bgCanvas.style.height = BH + 'px';
-}
-resizeBg();
-window.addEventListener('resize', resizeBg);
-
-const BG_COLORS = ['#00ff88', '#00ccff', '#ff00aa', '#ffcc00', '#8800ff'];
-const NUM_POINTS = 90;
-const MAX_DIST = 260;
-
-const bgPoints = [];
-for (let i = 0; i < NUM_POINTS; i++) {
-  bgPoints.push({
-    x: Math.random() * BW,
-    y: Math.random() * BH,
-    z: Math.random() * 1 + 0.3,
-    vx: (Math.random() - 0.5) * 0.4,
-    vy: (Math.random() - 0.5) * 0.4,
-    r: Math.random() * 2 + 1,
-    color: BG_COLORS[Math.floor(Math.random() * BG_COLORS.length)]
-  });
-}
-
-function animateBg() {
-  let bgFill;
-  if (document.body.classList.contains('light')) {
-    bgFill = 'rgba(240,240,240,0.25)';
-  } else {
-    bgFill = 'rgba(10,10,10,0.25)';
+  if(!isMobile && !REDUCED){
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY; mouseActive = true;
+    }, { passive: true });
+    window.addEventListener('mouseleave', () => {
+      mouseActive = false; mx = my = -9999;
+    }, { passive: true });
   }
-  bgCtx.fillStyle = bgFill;
-  bgCtx.fillRect(0, 0, BW, BH);
 
-  for (let i = 0; i < bgPoints.length; i++) {
-    const p = bgPoints[i];
-    p.x += p.vx * p.z;
-    p.y += p.vy * p.z;
+  let last = 0, rafId = null;
 
-    if (p.x < 0 || p.x > BW) p.vx *= -1;
-    if (p.y < 0 || p.y > BH) p.vy *= -1;
+  function isLight(){ return document.body.classList.contains('light'); }
 
-    for (let j = i + 1; j < bgPoints.length; j++) {
-      const q = bgPoints[j];
-      const dx = p.x - q.x;
-      const dy = p.y - q.y;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < MAX_DIST) {
-        const alpha = (1 - dist / MAX_DIST) * 0.35 * Math.min(p.z, q.z);
-        bgCtx.strokeStyle = p.color;
-        bgCtx.globalAlpha = alpha;
-        bgCtx.lineWidth = 0.8;
+  function frame(now){
+    rafId = requestAnimationFrame(frame);
+    if(document.hidden) return;
+    if(now - last < FRAME_MS) return;
+    const dt = Math.min((now - last) / 1000, 0.1);
+    last = now;
+
+    const light = isLight();
+    bgCtx.clearRect(0, 0, BW, BH);
+
+    // poeira de projetor
+    for(let i = 0; i < stars.length; i++){
+      const st = stars[i];
+      st.tw += st.sp;
+      const alpha = st.a * (0.5 + 0.5 * Math.sin(st.tw));
+      bgCtx.globalAlpha = light ? alpha * 0.7 : alpha;
+      bgCtx.fillStyle = light ? '#0b5c33' : '#d8ffe8';
+      bgCtx.beginPath();
+      bgCtx.arc(st.x, st.y, st.r, 0, 6.283);
+      bgCtx.fill();
+    }
+
+    // pontos
+    for(let i = 0; i < points.length; i++){
+      const p = points[i];
+      p.x += p.vx;
+      p.y += p.vy;
+      p.pulse += 0.012;
+
+      if(p.x < 0){ p.x = 0; p.vx *= -1; }
+      if(p.x > BW){ p.x = BW; p.vx *= -1; }
+      if(p.y < 0){ p.y = 0; p.vy *= -1; }
+      if(p.y > BH){ p.y = BH; p.vy *= -1; }
+
+      if(mouseActive && MOUSE_R){
+        const dx = p.x - mx;
+        const dy = p.y - my;
+        const d2 = dx * dx + dy * dy;
+        if(d2 < MOUSE_R * MOUSE_R && d2 > 0.01){
+          const d = Math.sqrt(d2);
+          const force = (1 - d / MOUSE_R) * 0.35;
+          p.x += (dx / d) * force;
+          p.y += (dy / d) * force;
+        }
+      }
+    }
+
+    // conexões
+    const maxD2 = MAX_DIST * MAX_DIST;
+    bgCtx.globalCompositeOperation = 'source-over';
+    bgCtx.lineWidth = 1;
+    bgCtx.strokeStyle = light ? '#0a6b3a' : NEON;
+
+    for(let i = 0; i < points.length; i++){
+      const p = points[i];
+      for(let j = i + 1; j < points.length; j++){
+        const q = points[j];
+        const dx = p.x - q.x;
+        const dy = p.y - q.y;
+        const d2 = dx * dx + dy * dy;
+        if(d2 > maxD2) continue;
+
+        const t = 1 - Math.sqrt(d2) / MAX_DIST;
+        bgCtx.globalAlpha = t * t * LINK_ALPHA * (light ? 0.9 : 1);
         bgCtx.beginPath();
         bgCtx.moveTo(p.x, p.y);
         bgCtx.lineTo(q.x, q.y);
         bgCtx.stroke();
       }
     }
+
+    // pontos luminosos
+    const useGlow = !weakDevice && !REDUCED;
+    for(let i = 0; i < points.length; i++){
+      const p = points[i];
+      const breathe = 1 + 0.12 * Math.sin(p.pulse);
+      bgCtx.globalAlpha = light ? 0.45 : 0.55 + 0.25 * Math.sin(p.pulse);
+      bgCtx.fillStyle = p.dim ? NEON_DIM : NEON;
+
+      if(useGlow){ bgCtx.shadowBlur = 10; bgCtx.shadowColor = NEON; }
+      bgCtx.beginPath();
+      bgCtx.arc(p.x, p.y, p.r * p.z * breathe, 0, 6.283);
+      bgCtx.fill();
+      if(useGlow) bgCtx.shadowBlur = 0;
+    }
     bgCtx.globalAlpha = 1;
 
-    bgCtx.fillStyle = p.color;
-    bgCtx.shadowBlur = 12;
-    bgCtx.shadowColor = p.color;
-    bgCtx.beginPath();
-    bgCtx.arc(p.x, p.y, p.r * p.z, 0, Math.PI * 2);
-    bgCtx.fill();
-    bgCtx.shadowBlur = 0;
+    // feixe de projetor
+    if(!REDUCED){
+      beamT += dt;
+      if(beamT > CYCLE) beamT = 0;
+
+      const prog = beamT / BEAM_SPEED;
+      if(prog <= 1){
+        const fade = Math.sin(prog * Math.PI);
+        const x = -BW * 0.35 + prog * (BW * 1.7);
+        const slant = BH * 0.55;
+        const peak = (light ? 0.10 : 0.16) * fade;
+
+        const grad = bgCtx.createLinearGradient(x - 160, -BH * 0.2, x + 160, slant);
+        grad.addColorStop(0, 'rgba(0,255,65,0)');
+        grad.addColorStop(0.45, 'rgba(0,255,65,' + (peak * 0.5).toFixed(4) + ')');
+        grad.addColorStop(0.5, 'rgba(0,255,65,' + peak.toFixed(4) + ')');
+        grad.addColorStop(0.55, 'rgba(0,255,65,' + (peak * 0.5).toFixed(4) + ')');
+        grad.addColorStop(1, 'rgba(0,255,65,0)');
+
+        bgCtx.globalCompositeOperation = 'lighter';
+        bgCtx.fillStyle = grad;
+        bgCtx.beginPath();
+        bgCtx.moveTo(x - 170, -BH * 0.2);
+        bgCtx.lineTo(x + 170, -BH * 0.2);
+        bgCtx.lineTo(x + 170 + slant * 0.6, BH * 1.2);
+        bgCtx.lineTo(x - 170 + slant * 0.6, BH * 1.2);
+        bgCtx.closePath();
+        bgCtx.fill();
+        bgCtx.globalCompositeOperation = 'source-over';
+      }
+    }
+
+    bgCtx.globalAlpha = 1;
+    bgCtx.globalCompositeOperation = 'source-over';
   }
 
-  requestAnimationFrame(animateBg);
-}
-animateBg();
+  function start(){
+    if(rafId !== null) return;
+    last = 0;
+    rafId = requestAnimationFrame(frame);
+  }
+  function stop(){
+    if(rafId === null) return;
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
 
-const observer = new MutationObserver(() => {
-  const novoBH = Math.max(document.body.scrollHeight, window.innerHeight);
-  if (novoBH !== BH) {
-    BH = bgCanvas.height = novoBH;
-    bgCanvas.style.height = BH + 'px';
-    bgPoints.forEach(p => {
-      if (p.y > BH) p.y = Math.random() * BH;
-      if (p.x > BW) p.x = Math.random() * BW;
+  start();
+
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden) stop(); else start();
+  });
+
+  let resizeTimer = null;
+  function scheduleResize(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resizeBg, 180);
+  }
+
+  window.addEventListener('resize', scheduleResize, { passive: true });
+  window.addEventListener('orientationchange', scheduleResize, { passive: true });
+})();
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+(function init(){
+  // tema salvo
+  try{
+    if(localStorage.getItem('cine-theme') === 'light'){
+      document.body.classList.add('light');
+      document.documentElement.classList.add('theme-light');
+    }
+  }catch(e){}
+  syncThemeBtn();
+
+  renderHomeExtras();
+
+  // header com borda ao rolar
+  const header = el('siteHeader');
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if(ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      header.classList.toggle('scrolled', window.pageYOffset > 8);
+      ticking = false;
     });
-  }
-});
-observer.observe(document.body, { childList: true, subtree: true });
+  }, { passive: true });
+
+  // busca global
+  const gs = el('globalSearch');
+  if(gs) gs.addEventListener('input', searchAllMovies);
+  if(gs) gs.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){ gs.value = ''; searchAllMovies(); }
+  });
+
+  const cs = el('clearSearch');
+  if(cs) cs.addEventListener('click', () => {
+    gs.value = '';
+    cs.classList.remove('show');
+    if(activeType) renderPage(activeType);
+    gs.focus();
+  });
+
+  // atalho "/" para buscar
+  document.addEventListener('keydown', (e) => {
+    if(e.key === '/' && document.activeElement !== gs && !/input|textarea/i.test(document.activeElement.tagName)){
+      e.preventDefault();
+      gs.focus();
+    }
+    if(e.key === 'Escape' && activeType) goHome();
+  });
+
+  // abrir direto pela URL (#terabox / #drive)
+  const hash = (location.hash || '').replace('#', '');
+  if(hash === 'terabox' || hash === 'drive') openPage(hash);
+
+  window.addEventListener('hashchange', () => {
+    const h = (location.hash || '').replace('#', '');
+    if(h === 'terabox' || h === 'drive') openPage(h, { keepScroll: true });
+    else if(!h) goHome();
+  });
+})();
 
 // ============================================================
-// INICIALIZACAO
+// PWA MANIFEST
 // ============================================================
-
-document.addEventListener('DOMContentLoaded', function(){
-  updateStats();
-  document.getElementById('pageHome').style.display = 'flex';
-  setTimeout(resizeBg, 100);
-});
-
-// ============================================================
-// MANIFEST E ICONE PWA
-// ============================================================
-
 (function(){
   var manifest = {
     name:"CINE TERABOX - Acervo Completo",
     short_name:"CINE TERABOX",
     start_url:".",
     display:"standalone",
-    background_color:"#0a0a0a",
+    background_color:"#08090a",
     theme_color:"#00ff41",
     icons:[
       {src:"android-chrome-192x192.png",sizes:"192x192",type:"image/png",purpose:"any"},
@@ -3443,7 +4425,6 @@ document.addEventListener('DOMContentLoaded', function(){
   link.href = URL.createObjectURL(blob);
   document.head.appendChild(link);
 })();
-
 </script>
 </body>
-  </html>
+</html>
